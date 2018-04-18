@@ -1,5 +1,4 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="elevate_sample_5">5dp</dimen>
     <dimen name="margin_button_top">15dp</dimen>
 </resources>

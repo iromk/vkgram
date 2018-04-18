@@ -1,10 +1,8 @@
 <resources>
 
-    <style name="Vkgram21Theme" parent="VkgramBaseTheme">
-
+    <style name="VkgramTheme" parent="VkgramBaseTheme">
+        <item name="android:textSize">28sp</item>
     </style>
-
-    <style name="Vkgram21Theme.NoActionBar" parent="VkgramBaseTheme.NoActionBar"/>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
