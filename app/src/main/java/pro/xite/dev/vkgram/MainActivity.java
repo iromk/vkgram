@@ -8,22 +8,27 @@ import android.widget.TextView;
 
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
+    @BindView(R.id.tv_sample)
+    TextView tvSample;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
+        ButterKnife.bind(this);
 
     }
 
     public void onButtonClick(View v) {
-        TextView tv = findViewById(R.id.tv_sample);
-        tv.setText("me CLICKED!");
+        tvSample.setText("me CLICKED!");
 
         OkHttpClient ok = new OkHttpClient();
         Request request = new Request.Builder()
@@ -35,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             response = ok.newCall(request).execute();
-            tv.setText(response.body().string());
+            tvSample.setText(response.body().string());
         } catch (IOException e) {
             e.printStackTrace();
         }
