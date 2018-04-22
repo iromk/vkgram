@@ -26,12 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    @BindView(R.id.textview_main_sample)
-    TextView textviewSample;
-    @BindView(R.id.textlayout_main_useremail)
-    TextInputLayout inputLayoutUserEmail;
-    @BindView(R.id.edittext_main_useremail)
-    AppCompatEditText edittextUserEmail;
+    @BindView(R.id.textview_main_sample) TextView textviewSample;
+    @BindView(R.id.textlayout_main_useremail) TextInputLayout inputLayoutUserEmail;
+    @BindView(R.id.edittext_main_useremail) AppCompatEditText edittextUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onButtonClick(View v) {
         if (!isValidEmail(edittextUserEmail.getText())) {
-            edittextUserEmail.setError("Incorrect input");
+            edittextUserEmail.setError(getString(R.string.main_email_mistake));
         } else {
             edittextUserEmail.setError(null);
         }
@@ -57,13 +54,14 @@ public class MainActivity extends AppCompatActivity {
         return Patterns.EMAIL_ADDRESS.matcher(userInput).matches();
     }
 
-    private static final class EmailInputActionHandler
+    private final static class EmailInputActionHandler
             implements TextWatcher, TextView.OnEditorActionListener, View.OnFocusChangeListener {
 
         private final WeakReference<MainActivity> activity;
 
         private final Pattern[] patterns = // in order of email completeness
                 {
+                        null,
                         Pattern.compile("[a-zA-Z0-9+._%\\-+]{1,256}"),
                         Pattern.compile("[a-zA-Z0-9+._%\\-+]{1,256}\\@"),
                         Pattern.compile("[a-zA-Z0-9+._%\\-+]{1,256}\\@[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}"),
@@ -72,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 };
         private final int NO_INPUT = 0;
         private final int TOTALLY_WRONG = 1;
-        private final int TOTALLY_SIMILAR = patterns.length;
+        private final int TOTALLY_SIMILAR = patterns.length - 1;
 
         private int similarity = 0;
 
@@ -80,41 +78,47 @@ public class MainActivity extends AppCompatActivity {
             this.activity = new WeakReference<>(activity);
         }
 
-        private int emailSimilarityIndex(CharSequence s) {
+        private int calcEmailSimilarityIndex(CharSequence s) {
             similarity = NO_INPUT;
-            if (s.length() > 0) {
-                similarity = TOTALLY_WRONG;
-                for (int i = TOTALLY_WRONG; i <= TOTALLY_SIMILAR; i++)
-                    if (patterns[i - 1].matcher(s).matches()) {
-                        similarity = i;
-                        break;
-                    }
-            }
-            Log.i(TAG, String.format("emailSimilarityIndex: %d", similarity));
+            if (s.length() > 0)
+                for (similarity = TOTALLY_SIMILAR;
+                     similarity > TOTALLY_WRONG && !patterns[similarity].matcher(s).matches();
+                     similarity--);
+
+            Log.i(TAG, String.format("calcEmailSimilarityIndex: %d", similarity));
             return similarity;
         }
 
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            return true;
+            final MainActivity A = activity.get();
+            Log.w(TAG, String.format("onEditorAction: "));
+            if (A == null) return true;
+            if(calcEmailSimilarityIndex(A.edittextUserEmail.getText().toString()) < TOTALLY_SIMILAR) {
+                A.edittextUserEmail.setError(activity.get().getString(R.string.main_email_mistake));
+                return true;
+            } else return false;
         }
 
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
-            if (activity.get() == null) return;
+            final MainActivity A = activity.get();
+            if (A == null) return;
+            calcEmailSimilarityIndex(A.edittextUserEmail.getText().toString());
+            if (similarity > NO_INPUT && similarity < TOTALLY_SIMILAR)
+                    A.edittextUserEmail.setError(A.getString(R.string.main_email_mistake));
+            else
+                A.edittextUserEmail.setError(null);
+
             Log.w(TAG, String.format("onFocusChange: %b", hasFocus));
         }
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            if (activity.get() == null) return;
-
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (activity.get() == null) return;
-
         }
 
         @Override
@@ -124,11 +128,11 @@ public class MainActivity extends AppCompatActivity {
                 resetInputError();
                 return;
             }
-            if (emailSimilarityIndex(s) == TOTALLY_SIMILAR) {
+            if (calcEmailSimilarityIndex(s) == TOTALLY_SIMILAR) {
                 dismissError();
             } else {
-                showError("Keep typing");
-                Log.d(TAG, String.format("afterTextChanged: errorous %d", emailSimilarityIndex(s)));
+                showError(activity.get().getString(R.string.main_keep_typing));
+                Log.d(TAG, String.format("afterTextChanged: errorous %d", calcEmailSimilarityIndex(s)));
 
             }
         }
