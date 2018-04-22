@@ -3,4 +3,14 @@
     <color name="colorPrimary">#4caf50</color>
     <color name="colorPrimaryDark">#388e3c</color>
     <color name="colorAccent">#ffab00</color>
+
+    <array name="inputColorsOfSatisfaction">
+        <item name="colorInputSimilarity0">@color/colorAccent</item>
+        <item name="colorInputSimilarity1">#b71c1c</item>
+        <item name="colorInputSimilarity2">#ff8a65</item>
+        <item name="colorInputSimilarity3">#fdd835</item>
+        <item name="colorInputSimilarity4">#558b2f</item>
+        <item name="colorInputSimilarity5">#448aff</item>
+    </array>
+    <color name="colorRed">#ff44ff</color>
 </resources>

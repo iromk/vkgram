@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="lorem_below21_ipsum"><![CDATA[Lorem <21 ipsum]]></string>
     <string name="hello_below21_world"><![CDATA[Hello <21 World!]]></string>
-    <string name="hello_v21_world">Hello v21 World!</string>
+    <string name="main_hello_v21_world">Hello v21 World!</string>
     <string name="lorem_v21_ipsum">Lorem v21 ipsum</string>
+    <string name="main_hint_useremail">Type email here</string>
 </resources>
