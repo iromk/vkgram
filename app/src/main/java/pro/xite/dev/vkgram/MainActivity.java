@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
@@ -54,6 +55,21 @@ public class MainActivity extends AppCompatActivity {
         return Patterns.EMAIL_ADDRESS.matcher(userInput).matches();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private final static class EmailInputActionHandler
             implements TextWatcher, TextView.OnEditorActionListener, View.OnFocusChangeListener {
 
@@ -78,12 +94,13 @@ public class MainActivity extends AppCompatActivity {
             this.activity = new WeakReference<>(activity);
         }
 
-        private int calcEmailSimilarityIndex(CharSequence s) {
+        private int calcEmailSimilarityIndex(@NonNull CharSequence s) {
             similarity = NO_INPUT;
             if (s.length() > 0)
                 for (similarity = TOTALLY_SIMILAR;
                      similarity > TOTALLY_WRONG && !patterns[similarity].matcher(s).matches();
-                     similarity--);
+                     similarity--)
+                    ;
 
             Log.i(TAG, String.format("calcEmailSimilarityIndex: %d", similarity));
             return similarity;
@@ -94,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             final MainActivity A = activity.get();
             Log.w(TAG, String.format("onEditorAction: "));
             if (A == null) return true;
-            if(calcEmailSimilarityIndex(A.edittextUserEmail.getText().toString()) < TOTALLY_SIMILAR) {
+            if (calcEmailSimilarityIndex(A.edittextUserEmail.getText().toString()) < TOTALLY_SIMILAR) {
                 A.edittextUserEmail.setError(activity.get().getString(R.string.main_email_mistake));
                 return true;
             } else return false;
@@ -106,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
             if (A == null) return;
             calcEmailSimilarityIndex(A.edittextUserEmail.getText().toString());
             if (similarity > NO_INPUT && similarity < TOTALLY_SIMILAR)
-                    A.edittextUserEmail.setError(A.getString(R.string.main_email_mistake));
+                A.edittextUserEmail.setError(A.getString(R.string.main_email_mistake));
             else
                 A.edittextUserEmail.setError(null);
 
@@ -155,26 +172,10 @@ public class MainActivity extends AppCompatActivity {
         @SuppressLint("RestrictedApi")
         private void setEditColor(final int colorIndex) {
             final TypedArray colors = activity.get().getResources().obtainTypedArray(R.array.inputColorsOfSatisfaction);
-            final ColorStateList colorStateList = ColorStateList.valueOf(colors.getColor(colorIndex, 0));
+            final ColorStateList colorStateList = ColorStateList.valueOf(colors.getColor(colorIndex, NO_INPUT));
             activity.get().edittextUserEmail.setSupportBackgroundTintList(colorStateList);
             colors.recycle();
         }
 
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }
