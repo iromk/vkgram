@@ -33,7 +33,6 @@
             android:hint="@string/main_hint_useremail"
             android:inputType="textEmailAddress"
             app:errorEnabled="true" />
-        <!--app:errorTextAppearance="@style/EmailValidationFail"-->
 
     </android.support.design.widget.TextInputLayout>
 
