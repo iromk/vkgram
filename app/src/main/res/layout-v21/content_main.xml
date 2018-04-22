@@ -33,12 +33,11 @@
             android:hint="@string/main_hint_useremail"
             android:inputType="textEmailAddress"
             app:errorEnabled="true" />
-        <!--app:errorTextAppearance="@style/EmailValidationFail"-->
 
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:text="@string/lorem_v21_ipsum"
+        android:text="@string/button_select_theme"
         android:layout_marginTop="@dimen/margin_button_top"
         android:elevation="@dimen/elevate_sample_5"
         android:onClick="onButtonClick"
