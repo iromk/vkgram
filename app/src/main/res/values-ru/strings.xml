@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Vkgram</string>
-    <string name="action_settings">Настройки</string>
+    <string name="app_name">ВКграм</string>
+    <string name="menu_action_settings">Настройки</string>
     <string name="button_select_theme">Сменить тему</string>
+    <string name="activity_theme_select_title">Цветовая схема</string>
 </resources>
