@@ -15,7 +15,7 @@
         android:layout_marginTop="62dp"
         android:background="@color/colorAccent"
         android:elevation="@dimen/elevate_sample_5"
-        android:text="@string/main_hello_v21_world" />
+        android:text="@string/main_below21_helloworld" />
 
 
     <android.support.design.widget.TextInputLayout
@@ -38,7 +38,7 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:text="@string/lorem_v21_ipsum"
+        android:text="@string/main_below21_button_send"
         android:layout_marginTop="@dimen/margin_button_top"
         android:elevation="@dimen/elevate_sample_5"
         android:onClick="onButtonClick"

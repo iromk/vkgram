@@ -2,10 +2,10 @@
 <resources>
     <string name="app_name">Vkgram</string>
     <string name="action_settings">Настройки</string>
-    <string name="lorem_below21_ipsum"><![CDATA[Lorem <21 ipsum]]></string>
-    <string name="hello_below21_world"><![CDATA[Hello <21 World!]]></string>
-    <string name="main_hello_v21_world">Hello v21 World!</string>
-    <string name="lorem_v21_ipsum">Lorem v21 ipsum</string>
+    <string name="main_below21_button_send"><![CDATA[Отправить <21 почту]]></string>
+    <string name="main_below21_helloworld"><![CDATA[Hello <21 World!]]></string>
+    <string name="main_v21_helloworld">Hello v21 World!</string>
+    <string name="main_v21_button_send">Отправить v21 почту</string>
     <string name="main_hint_useremail">Э-почта</string>
     <string name="main_email_mistake">Это не э-почта</string>
     <string name="main_keep_typing">Пиши еще</string>
