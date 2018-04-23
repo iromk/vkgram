@@ -12,7 +12,7 @@
         android:layout_height="104dp"
         android:layout_marginStart="88dp"
         android:layout_marginTop="48dp"
-        android:text="Indigo"
+        android:text="@string/theme_select_indigo_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/button_indigo"/>
@@ -22,7 +22,7 @@
         android:layout_height="104dp"
         android:layout_marginStart="88dp"
         android:layout_marginTop="32dp"
-        android:text="Greengo"
+        android:text="@string/theme_select_greengo_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button"
         android:background="@drawable/button_greengo"/>

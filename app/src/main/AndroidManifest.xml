@@ -20,7 +20,7 @@
         </activity>
         <activity
             android:name=".ThemeSelectActivity"
-            android:label="@string/activity_theme_select_title">
+            android:label="@string/theme_select_title">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
