@@ -1,50 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textview_main_sample"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="62dp"
-        android:background="@color/colorAccent"
-        android:elevation="@dimen/elevate_sample_5"
-        android:text="@string/main_below21_helloworld" />
-
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/textlayout_main_useremail"
-        android:layout_width="288dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textview_main_sample"
-        android:layout_centerHorizontal="true"
-        app:errorEnabled="true"
-        app:errorTextAppearance="@style/EmailValidationFail">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/edittext_main_useremail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/main_hint_useremail"
-            android:inputType="textEmailAddress"
-            app:errorEnabled="true" />
-
-    </android.support.design.widget.TextInputLayout>
-
     <Button
-        android:text="@string/main_below21_button_send"
+        android:text="@string/main_button_send"
         android:layout_marginTop="@dimen/margin_button_top"
         android:elevation="@dimen/elevate_sample_5"
         android:onClick="onButtonClick"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textlayout_main_useremail" />
+        />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
