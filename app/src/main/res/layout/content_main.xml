@@ -24,7 +24,7 @@
         android:onClick="onButtonClick"
         android:text="@string/main_button_send"
         android:textColor="@drawable/bt_states_colors"
-        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintEnd_toStartOf="@+id/main_tv_or"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,7 +44,7 @@
         android:text="@string/main_button_send"
         android:textColor="@drawable/bt_states_colors"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintStart_toEndOf="@+id/main_tv_or"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -53,8 +53,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="132dp"
         android:layout_marginTop="64dp"
         android:background="@drawable/bt_states_backgrounds"
         android:elevation="@dimen/elevate_sample_5"
@@ -63,24 +61,21 @@
         android:onClick="onButton3Click"
         android:text="@string/main_button_send"
         android:textColor="@drawable/bt_states_colors"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:ignore="OnClick" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_tv_or" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/main_tv_or"
         android:layout_width="49dp"
         android:layout_height="31dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="168dp"
         android:layout_marginTop="128dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/main_tv_or"
         android:textAlignment="center"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/toolbar_nice" />
+        app:layout_constraintTop_toTopOf="@+id/toolbar_nice"
+        tools:layout_editor_absoluteX="168dp" />
 </android.support.constraint.ConstraintLayout>
