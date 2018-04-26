@@ -2,7 +2,7 @@ package pro.xite.dev.vkgram;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -17,18 +17,19 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.bt_1) Button btOne;
     @BindView(R.id.bt_2) Button btTwo;
     @BindView(R.id.bt_3) Button btTri;
+    @BindView(R.id.toolbar_nice) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
     }
 
     public void onButtonClick(View v) {
         if(v.isEnabled()) {
-//            if (btOne.equals(v)) {// .isFocused()) {
-            if (btOne.getId() == v.getId()) {// .isFocused()) {
+            if (btOne.getId() == v.getId()) {
                 btTwo.requestFocus();
                 btTwo.setEnabled(true);
                 btOne.setEnabled(false);

@@ -1,4 +1,5 @@
 <resources>
     <dimen name="elevate_sample_5">15dp</dimen>
     <dimen name="margin_button_top">15dp</dimen>
+    <dimen name="elevate_toolbar_nice">4dp</dimen>
 </resources>

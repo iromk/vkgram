@@ -1,17 +1,13 @@
 <resources>
 
-    <style name="VkgramBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!--<item name="colorPrimary">@color/primary_indigo</item>-->
-        <!--<item name="colorPrimaryDark">@color/primary_indigo_dark</item>-->
-        <!--<item name="colorAccent">@color/bt_enabled_text</item>-->
+    <style name="VkgramBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_indigo</item>
+        <item name="colorPrimaryDark">@color/primary_indigo_dark</item>
+        <item name="colorAccent">@color/accent_pink</item>
         <item name="android:textSize">20sp</item>
     </style>
 
 
     <style name="VkgramTheme" parent="VkgramBaseTheme"/>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>
