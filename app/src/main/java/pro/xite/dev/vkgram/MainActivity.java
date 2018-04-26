@@ -1,6 +1,8 @@
 package pro.xite.dev.vkgram;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -39,6 +41,20 @@ public class MainActivity extends AppCompatActivity {
                 btTwo.setEnabled(false);
             }
         }
+    }
+
+    public void onButton3Click(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.dialog_message)
+                .setTitle(R.string.dialog_title);
+
+        builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

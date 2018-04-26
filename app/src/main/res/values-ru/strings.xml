@@ -3,4 +3,6 @@
     <string name="action_settings">Настройки</string>
     <string name="main_button_send">Нажми меня</string>
     <string name="main_tv_or">или</string>
+    <string name="dialog_message">Левая кнопка включает правую и наоборот.\n\nНижняя сама по себе.</string>
+    <string name="dialog_title">Совет</string>
 </resources>

@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="main_button_send">Touch me</string>
     <string name="main_tv_or">or</string>
+    <string name="dialog_message">The left button turns on the right one and vice versa.\n\nThe button at the bottom can always be pressed.</string>
+    <string name="dialog_title">Tip</string>
+    <string name="btn_ok">OK</string>
 </resources>
