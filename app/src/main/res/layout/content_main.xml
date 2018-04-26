@@ -3,16 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/bt_1"
         android:text="@string/main_button_send"
-        android:layout_marginTop="@dimen/margin_button_top"
-        android:elevation="@dimen/elevate_sample_5"
+        android:textColor="@drawable/bt_states_colors"
+        android:background="@drawable/bt_states_backgrounds"
         android:onClick="onButtonClick"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:layout_centerInParent="true"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="64dp"
+        android:elevation="@dimen/elevate_sample_5"
+        android:focusableInTouchMode="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/bt_2"
+        android:enabled="false"
+        android:text="@string/main_button_send"
+        android:textColor="@drawable/bt_states_colors"
+        android:background="@drawable/bt_states_backgrounds"
+        android:onClick="onButtonClick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="48dp"
+        android:focusableInTouchMode="true"
+        android:elevation="@dimen/elevate_sample_5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bt_1" />
+
+
+    <Button
+        android:id="@+id/bt_3"
+        android:enabled="true"
+        android:text="@string/main_button_send"
+        android:textColor="@drawable/bt_states_colors"
+        android:background="@drawable/bt_states_backgrounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="48dp"
+        android:focusableInTouchMode="true"
+        android:elevation="@dimen/elevate_sample_5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bt_2" />
 </android.support.constraint.ConstraintLayout>

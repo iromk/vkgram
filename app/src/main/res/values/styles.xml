@@ -1,9 +1,9 @@
 <resources>
 
     <style name="VkgramBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="colorPrimary">@color/primary_indigo</item>-->
+        <!--<item name="colorPrimaryDark">@color/primary_indigo_dark</item>-->
+        <!--<item name="colorAccent">@color/bt_enabled_text</item>-->
         <item name="android:textSize">20sp</item>
     </style>
 
@@ -13,9 +13,5 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="EmailValidationFail" parent="VkgramTheme">
-        <item name="android:textSize">12sp</item>
-    </style>
 
 </resources>

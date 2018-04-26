@@ -2,14 +2,21 @@ package pro.xite.dev.vkgram;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    @BindView(R.id.bt_1) Button btOne;
+    @BindView(R.id.bt_2) Button btTwo;
+    @BindView(R.id.bt_3) Button btTri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +26,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onButtonClick(View v) {
+        if(v.isEnabled()) {
+//            if (btOne.equals(v)) {// .isFocused()) {
+            if (btOne.getId() == v.getId()) {// .isFocused()) {
+                btTwo.requestFocus();
+                btTwo.setEnabled(true);
+                btOne.setEnabled(false);
+            } else {
+                btOne.requestFocus();
+                btOne.setEnabled(true);
+                btTwo.setEnabled(false);
+            }
+        }
     }
 
     @Override
@@ -35,4 +54,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

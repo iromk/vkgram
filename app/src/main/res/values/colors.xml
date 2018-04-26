@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="primary_indigo">#3F51B5</color>
+    <color name="primary_indigo_dark">#303F9F</color>
+    <color name="accent_pink">#FF4081</color>
 
-    <array name="inputColorsOfSatisfaction">
-        <item name="colorInputSimilarity0">@color/colorAccent</item>
-        <item name="colorInputSimilarity1">#b71c1c</item>
-        <item name="colorInputSimilarity2">#ff8a65</item>
-        <item name="colorInputSimilarity3">#fdd835</item>
-        <item name="colorInputSimilarity4">#558b2f</item>
-        <item name="colorInputSimilarity5">#448aff</item>
-    </array>
+    <color name="bt_focused">#64dd17</color>
+    <color name="bt_enabled">#33691e</color>
+    <color name="bt_disabled">#9e9e9e</color>
 
 </resources>
