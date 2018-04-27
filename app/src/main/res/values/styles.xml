@@ -8,7 +8,13 @@
     </style>
 
 
-    <style name="VkgramTheme" parent="VkgramBaseTheme"/>
+    <style name="VkgramThemeGreengo" parent="VkgramBaseTheme"/>
+    <style name="VkgramThemeIndigo" parent="VkgramBaseTheme">
+        <item name="colorPrimary">@color/indigo</item>
+        <item name="colorPrimaryDark">@color/indigo_dark</item>
+        <item name="colorAccent">@color/pink_accent</item>
+    </style>
+
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

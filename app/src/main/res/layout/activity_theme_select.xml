@@ -13,6 +13,7 @@
         android:layout_marginStart="88dp"
         android:layout_marginTop="48dp"
         android:text="@string/theme_select_indigo_button"
+        android:onClick="onButtonClick"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/button_indigo"/>
