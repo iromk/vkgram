@@ -7,7 +7,7 @@
     tools:context=".ThemeSelectActivity">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_indigo"
         android:layout_width="205dp"
         android:layout_height="104dp"
         android:layout_marginStart="88dp"
@@ -19,13 +19,14 @@
         android:background="@drawable/button_indigo"/>
 
     <Button
+        android:id="@+id/btn_greengo"
         android:layout_width="205dp"
         android:layout_height="104dp"
         android:layout_marginStart="88dp"
         android:layout_marginTop="32dp"
         android:text="@string/theme_select_greengo_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button"
+        app:layout_constraintTop_toBottomOf="@+id/btn_indigo"
         android:background="@drawable/button_greengo"/>
 
 </android.support.constraint.ConstraintLayout>

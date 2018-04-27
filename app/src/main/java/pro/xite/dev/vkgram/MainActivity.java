@@ -1,6 +1,7 @@
 package pro.xite.dev.vkgram;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +18,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final SharedPreferences prefSettings = getSharedPreferences("HW2.SETTINGS", MODE_PRIVATE);
         if(savedInstanceState != null) {
-            theme = savedInstanceState.getInt("A");
-
+            theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID);
+            prefSettings.edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
+        } else {
+            @StyleRes int savedTheme = prefSettings.getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
+            if(savedTheme != ThemeSelectActivity.NONE)
+                theme = savedTheme;
         }
         setTheme(theme);
         setContentView(R.layout.content_main);
@@ -37,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, ThemeSelectActivity.class);
-            startActivityForResult(intent, 1);
+            startActivityForResult(intent, 0);
             return true;
         }
 
@@ -47,16 +53,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("A", theme);
+        outState.putInt(ThemeSelectActivity.KEY_THEME_ID, theme);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.w(TAG, "onActivityResult: ");
         super.onActivityResult(requestCode, resultCode, data);
-        if(data != null) {
-            final @StyleRes int theme = data.getIntExtra("A", Integer.MIN_VALUE);
-            if(theme != Integer.MIN_VALUE) {
+        if(resultCode == ThemeSelectActivity.RESULT_THEME_CHANGED && data != null) {
+            final @StyleRes int theme = data.getIntExtra(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
+            if (theme != ThemeSelectActivity.NONE) {
                 this.theme = theme;
                 recreate();
             }
