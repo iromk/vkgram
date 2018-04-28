@@ -3,7 +3,6 @@ package pro.xite.dev.vkgram;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 
 import butterknife.ButterKnife;
 
@@ -16,9 +15,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
         ButterKnife.bind(this);
-    }
-
-    public void onButtonClick(View v) {
     }
 
     @Override
