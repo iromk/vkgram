@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="indigo">#3F51B5</color>
+    <color name="indigo_dark">#303F9F</color>
+    <color name="pink_accent">#FF4081</color>
+
+    <color name="green">#4caf50</color>
+    <color name="green_dark">#388e3c</color>
+    <color name="orange_accent">#ffab00</color>
+
+    <color name="color_primary">@color/indigo</color>
+    <color name="color_primary_dark">@color/indigo_dark</color>
+    <color name="color_accent">@color/pink_accent</color>
+
+</resources>

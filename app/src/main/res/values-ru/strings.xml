@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ВКграм</string>
+    <string name="menu_action_settings">Настройки</string>
+    <string name="theme_select_title">Цветовая схема</string>
+    <string name="theme_select_indigo_button">Индиго</string>
+    <string name="theme_select_greengo_button">Гринго</string>
+</resources>
