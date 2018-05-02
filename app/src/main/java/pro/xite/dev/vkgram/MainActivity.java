@@ -14,9 +14,15 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiModel;
 import com.vk.sdk.api.model.VKApiUser;
+import com.vk.sdk.api.model.VKApiUserFull;
+import com.vk.sdk.api.model.VKList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -98,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResult(VKAccessToken res) {
                 Log.d(TAG, "onResult: User passed Authorization");
 
-                setUserName(res.userId);
+                requestUserName();
             }
 
             @Override
@@ -110,6 +116,18 @@ public class MainActivity extends AppCompatActivity {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void requestUserName() {
+        final String uid = VKAccessToken.currentToken().userId;
+        VKRequest request = VKApi.users().get();//VKParameters.from(VKApiConst.USER_IDS, uid), VKApiUser.class);
+        request.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                VKList<VKApiUserFull> user = (VKList<VKApiUserFull>)(response.parsedModel);
+                setUserName(String.format("%s %s", user.get(0).first_name, user.get(0).last_name));
+            }
+        });
     }
 
     private void setUserName(final String text) {
