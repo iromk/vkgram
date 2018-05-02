@@ -14,15 +14,13 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiModel;
-import com.vk.sdk.api.model.VKApiUser;
 import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKList;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,12 +46,15 @@ public class MainActivity extends AppCompatActivity {
             if(savedTheme != ThemeSelectActivity.NONE)
                 theme = savedTheme;
         }
+
         setTheme(theme);
         setContentView(R.layout.content_main);
         ButterKnife.bind(this);
+
+        //
 //        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 
-        Log.w(TAG, "onCreate: before logng ");
+        Log.w(TAG, "onCreate: before login ");
         VKSdk.login(this);
         Log.w(TAG, "onCreate: after login");
     }
@@ -119,13 +120,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestUserName() {
-        final String uid = VKAccessToken.currentToken().userId;
-        VKRequest request = VKApi.users().get();//VKParameters.from(VKApiConst.USER_IDS, uid), VKApiUser.class);
+        final VKRequest request = VKApi.users().get(); //VKParameters.from(VKApiConst.USER_IDS, uid));
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
+            @SuppressWarnings("unchecked")
             public void onComplete(VKResponse response) {
-                VKList<VKApiUserFull> user = (VKList<VKApiUserFull>)(response.parsedModel);
-                setUserName(String.format("%s %s", user.get(0).first_name, user.get(0).last_name));
+                try {
+                    VKList<VKApiUserFull> user = (VKList) (response.parsedModel);
+                    setUserName(String.format("%s %s", user.get(0).first_name, user.get(0).last_name));
+                } catch (ClassCastException e) {
+                    Log.e(TAG, String.format(Locale.US, "onComplete: %s", e));
+                }
             }
         });
     }
