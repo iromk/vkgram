@@ -8,17 +8,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.model.VKApiUser;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
 
     private @StyleRes int theme = R.style.VkgramThemeGreengo;
+
+    @BindView(R.id.user_name) TextView tvUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final SharedPreferences prefSettings = getSharedPreferences("HW2.SETTINGS", MODE_PRIVATE);
+
         if(savedInstanceState != null) {
             theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID);
             prefSettings.edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
@@ -29,6 +44,17 @@ public class MainActivity extends AppCompatActivity {
         }
         setTheme(theme);
         setContentView(R.layout.content_main);
+        ButterKnife.bind(this);
+//        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+
+        Log.w(TAG, "onCreate: before logng ");
+        VKSdk.login(this);
+        Log.w(TAG, "onCreate: after login");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -67,5 +93,26 @@ public class MainActivity extends AppCompatActivity {
                 recreate();
             }
         }
+        VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
+            @Override
+            public void onResult(VKAccessToken res) {
+                Log.d(TAG, "onResult: User passed Authorization");
+
+                setUserName(res.userId);
+            }
+
+            @Override
+            public void onError(VKError error) {
+                Log.d(TAG, "onResult: User didn't pass Authorization");
+            }
+        };
+
+        if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void setUserName(final String text) {
+        tvUserName.setText(text);
     }
 }
