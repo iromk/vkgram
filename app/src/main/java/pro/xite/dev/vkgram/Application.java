@@ -8,6 +8,9 @@ import android.widget.Toast;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.util.VKUtil;
+
+import java.util.Arrays;
 
 public class Application extends android.app.Application {
 
@@ -31,7 +34,15 @@ public class Application extends android.app.Application {
         super.onCreate();
         Log.d(TAG, "Application onCreate: ");
         vkAccessTokenTracker.startTracking();
+        getCertFingerprint();
         VKSdk.initialize(this);
+    }
+
+    private void getCertFingerprint() {
+        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
+
+        Log.d(TAG, String.format("getCertFingerprint: \n%s", Arrays.toString(fingerprints)));
+
     }
 
 }

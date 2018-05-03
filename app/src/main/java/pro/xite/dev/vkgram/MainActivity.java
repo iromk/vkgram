@@ -14,13 +14,9 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiModel;
-import com.vk.sdk.api.model.VKApiUser;
 import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKList;
 
@@ -41,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         final SharedPreferences prefSettings = getSharedPreferences("HW2.SETTINGS", MODE_PRIVATE);
 
         if(savedInstanceState != null) {
-            theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID);
+            theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
             prefSettings.edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
         } else {
             @StyleRes int savedTheme = prefSettings.getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
@@ -51,11 +47,8 @@ public class MainActivity extends AppCompatActivity {
         setTheme(theme);
         setContentView(R.layout.content_main);
         ButterKnife.bind(this);
-//        String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 
-        Log.w(TAG, "onCreate: before logng ");
         VKSdk.login(this);
-        Log.w(TAG, "onCreate: after login");
     }
 
     @Override
