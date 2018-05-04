@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.VKServiceActivity;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final SharedPreferences prefSettings = getSharedPreferences("HW2.SETTINGS", MODE_PRIVATE);
+        final SharedPreferences prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
 
         if(savedInstanceState != null) {
             theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.w(TAG, "onActivityResult: ");
+        Log.w(TAG, String.format("onActivityResult: requestCode == %d, resultCode == %d", requestCode, resultCode));
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == ThemeSelectActivity.RESULT_THEME_CHANGED && data != null) {
             final @StyleRes int theme = data.getIntExtra(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
@@ -91,24 +92,24 @@ public class MainActivity extends AppCompatActivity {
                 this.theme = theme;
                 recreate();
             }
+            return;
         }
-        VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                Log.d(TAG, "onResult: User passed Authorization");
+        if (requestCode == VKServiceActivity.VKServiceType.Authorization.getOuterCode()) {
+            VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
+                @Override
+                public void onResult(VKAccessToken res) {
+                    Log.d(TAG, String.format("onResult: User passed Authorization\ntoken [%s]",res.accessToken));
+                    requestUserName();
+                }
 
-                requestUserName();
-            }
-
-            @Override
-            public void onError(VKError error) {
-                Log.d(TAG, "onResult: User didn't pass Authorization");
-            }
-        };
-
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, callback)) {
-            super.onActivityResult(requestCode, resultCode, data);
+                @Override
+                public void onError(VKError error) {
+                    Log.d(TAG, "onResult: User didn't pass Authorization");
+                }
+            };
+            if(VKSdk.onActivityResult(requestCode, resultCode, data, callback)) return;
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void requestUserName() {
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
             public void onComplete(VKResponse response) {
                 VKList<VKApiUserFull> user = (VKList<VKApiUserFull>)(response.parsedModel);
                 setUserName(String.format("%s %s", user.get(0).first_name, user.get(0).last_name));
+                setTitle(String.format("%s / %s %s", getString(R.string.app_name), user.get(0).first_name, user.get(0).last_name));
             }
         });
     }
