@@ -21,6 +21,8 @@ import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKList;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -117,10 +119,15 @@ public class MainActivity extends AppCompatActivity {
         VKRequest request = VKApi.users().get();//VKParameters.from(VKApiConst.USER_IDS, uid), VKApiUser.class);
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
+            @SuppressWarnings("unchecked")
             public void onComplete(VKResponse response) {
-                VKList<VKApiUserFull> user = (VKList<VKApiUserFull>)(response.parsedModel);
-                setUserName(String.format("%s %s", user.get(0).first_name, user.get(0).last_name));
-                setTitle(String.format("%s / %s %s", getString(R.string.app_name), user.get(0).first_name, user.get(0).last_name));
+                try {
+                    VKList<VKApiUserFull> user = (VKList) (response.parsedModel);
+                    setUserName(String.format("%s %s", user.get(0).first_name, user.get(0).last_name));
+                    setTitle(String.format("%s / %s %s", getString(R.string.app_name), user.get(0).first_name, user.get(0).last_name));
+                } catch (ClassCastException e) {
+                    Log.e(TAG, String.format(Locale.US, "onComplete: %s", e));
+                }
             }
         });
     }
