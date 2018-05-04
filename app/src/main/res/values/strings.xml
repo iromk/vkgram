@@ -9,4 +9,6 @@
     <string name="theme_select_indigo_button">Indigo</string>
     <string name="theme_select_greengo_button">Greengo</string>
     <string name="shared_prefs_default">&app_name;.default</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
