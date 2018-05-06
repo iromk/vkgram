@@ -33,8 +33,8 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Application onCreate: ");
-        vkAccessTokenTracker.startTracking();
         getCertFingerprint();
+        vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
     }
 

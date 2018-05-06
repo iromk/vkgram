@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.vk.sdk.VKAccessToken;
@@ -20,12 +21,17 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKServiceActivity;
 import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.methods.VKApiFriends;
 import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKList;
+import com.vk.sdk.api.model.VKPhotoArray;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -35,12 +41,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
 
+    private boolean isResumed = false;
+
     private @StyleRes int theme = R.style.VkgramThemeGreengo;
 
     @BindView(R.id.user_name) TextView tvUserName;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
     @BindView(R.id.drawer_main_nav_view) NavigationView navigationView;
+    @BindView(R.id.response_json) EditText edResponseJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +69,57 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
 
         initUI();
+        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
+            @Override
+            public void onResult(VKSdk.LoginState res) {
+                if (isResumed) {
+                    switch (res) {
+                        case LoggedOut:
+                            Log.d(TAG, "wakeUpSession: invoke login");
+                            doLogin();
+                            break;
+                        case LoggedIn:
+                            Log.d(TAG, "wakeUpSession: already logged in");
+                            break;
+                        case Pending:
+                            Log.d(TAG, "wakeUpSession: pending state");
+                            break;
+                        case Unknown:
+                            Log.d(TAG, "wakeUpSession: unknown state");
+                            break;
+                    }
+                }
+            }
 
+            @Override
+            public void onError(VKError error) {
+                Log.e(TAG, "wakeUpSession.onError: " + error.toString());
+            }
+        });
+//        requestUserName();
+    }
+
+    private void doLogin() {
         VKSdk.login(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isResumed = true;
+        if (VKSdk.isLoggedIn()) {
+            Log.d(TAG, "onResume: logged in");
+            requestUserName();
+        } else {
+            Log.d(TAG, "onResume: not logged in");
+            doLogin();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        isResumed = false;
+        super.onPause();
     }
 
     private void initUI() {
@@ -134,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    VKApiUserFull user;
     private void requestUserName() {
         final String uid = VKAccessToken.currentToken().userId;
         VKRequest request = VKApi.users().get();//VKParameters.from(VKApiConst.USER_IDS, uid), VKApiUser.class);
@@ -142,9 +201,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @SuppressWarnings("unchecked")
             public void onComplete(VKResponse response) {
                 try {
-                    VKList<VKApiUserFull> user = (VKList) (response.parsedModel);
-                    setUserName(String.format("%s %s", user.get(0).first_name, user.get(0).last_name));
-                    setTitle(String.format("%s / %s %s", getString(R.string.app_name), user.get(0).first_name, user.get(0).last_name));
+                    VKList<VKApiUserFull> users = (VKList) (response.parsedModel);
+                    user = users.get(0);
+                    setUserName(String.format("%s %s", user.first_name, user.last_name));
+                    setTitle(String.format("%s / %s %s", getString(R.string.app_name), user.first_name, user.last_name));
                 } catch (ClassCastException e) {
                     Log.e(TAG, String.format(Locale.US, "onComplete: %s", e));
                 }
@@ -158,6 +218,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.load_friends && user != null) {
+            VKApiFriends friends = new VKApiFriends();
+            VKRequest request; //= friends.get(VKParameters.from(VKApiConst.USER_IDS, user.id));
+//            request = friends.get(VKParameters.from(VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo"));
+//            VKApiPhotos photos = new VKApiPhotos();
+//            request = new VKRequest("photos.get", VKParameters.from(VKApiConst.USER_ID, user.id, VKApiConst.ALBUM_ID, "wall"), VKPhotoArray.class);
+            request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, user.id, "need_system", "1"));//, VKApiPhotoAlbum.class);
+            request.getPreparedParameters().remove("access_token");
+            try {
+                Log.i(TAG, "onNavigationItemSelected:\n"+request.getPreparedRequest().getQuery().toString());
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            request.executeWithListener(new VKRequest.VKRequestListener() {
+                @Override
+                public void onComplete(VKResponse response) {
+//                    VKUsersArray users = (VKUsersArray) (response.parsedModel);
+                    VKPhotoArray users = (VKPhotoArray) (response.parsedModel);
+                    edResponseJson.setText(response.json.toString());
+                    super.onComplete(response);
+                }
+
+                @Override
+                public void onError(VKError error) {
+                    Log.e(TAG, "onError: request" + error.toString());
+                    super.onError(error);
+                }
+            });
+            return true;
+        }https://vk.com/id
+
         return false;
     }
 }
+//https://api.vk.com/method/photos.get?user_id=29621442&v=5.52&album_id=saved
+//https://api.vk.com/method/photos.get?user_id=455492428&v=5.52&album_id=saved
+//https://api.vk.com/method/photos.getAlbums?owner_id=455492428&v=5.52&count=10&need_system=1
+//https://vk.com/friends?id=&section=all
