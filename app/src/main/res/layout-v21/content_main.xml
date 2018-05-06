@@ -5,13 +5,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/main_content_coordinator"
+    tools:showIn="@layout/drawer_content_coordinator"
     tools:context=".MainActivity">
-
-     <TextView
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
      <EditText
          android:id="@+id/response_json"

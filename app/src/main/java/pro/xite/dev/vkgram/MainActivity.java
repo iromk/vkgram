@@ -45,11 +45,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private @StyleRes int theme = R.style.VkgramThemeGreengo;
 
-    @BindView(R.id.user_name) TextView tvUserName;
-    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.toolbar_main) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
     @BindView(R.id.drawer_main_nav_view) NavigationView navigationView;
     @BindView(R.id.response_json) EditText edResponseJson;
+    TextView tvVkUserName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +65,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 theme = savedTheme;
         }
         setTheme(theme);
-        setContentView(R.layout.drawer_main);
+        setContentView(R.layout.drawer_activity_main);
         ButterKnife.bind(this);
 
         initUI();
+        initSession();
+    }
+
+    private void initUI() {
+        tvVkUserName = navigationView.getHeaderView(0).findViewById(R.id.vk_user_full_name);
+
+        updateUI();
+
+        setSupportActionBar(toolbar);
+        final ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawerMainLayout,
+                toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
+
+        drawerToggle.syncState();
+
+        drawerMainLayout.addDrawerListener(drawerToggle);
+        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void updateUI() {
+        final boolean isLoggedIn = VKSdk.isLoggedIn();
+        navigationView.getMenu().setGroupVisible(R.id.logged_in, isLoggedIn);
+        navigationView.getMenu().setGroupVisible(R.id.logged_out, !isLoggedIn);
+    }
+
+    private void initSession() {
         VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
             @Override
             public void onResult(VKSdk.LoginState res) {
@@ -76,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     switch (res) {
                         case LoggedOut:
                             Log.d(TAG, "wakeUpSession: invoke login");
-                            doLogin();
+                            tryLogin();
                             break;
                         case LoggedIn:
                             Log.d(TAG, "wakeUpSession: already logged in");
@@ -96,10 +125,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e(TAG, "wakeUpSession.onError: " + error.toString());
             }
         });
-//        requestUserName();
     }
 
-    private void doLogin() {
+    private void tryLogin() {
         VKSdk.login(this);
     }
 
@@ -112,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             requestUserName();
         } else {
             Log.d(TAG, "onResume: not logged in");
-            doLogin();
+            tryLogin();
         }
     }
 
@@ -120,21 +148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onPause() {
         isResumed = false;
         super.onPause();
-    }
-
-    private void initUI() {
-        setSupportActionBar(toolbar);
-        final ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
-                this,
-                drawerMainLayout,
-                toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
-
-        drawerToggle.syncState();
-
-        drawerMainLayout.addDrawerListener(drawerToggle);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -179,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onResult(VKAccessToken res) {
                     Log.d(TAG, String.format("onResult: User passed Authorization\ntoken [%s]",res.accessToken));
-                    requestUserName();
+                    onLoginStateChanged();
                 }
 
                 @Override
@@ -204,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     VKList<VKApiUserFull> users = (VKList) (response.parsedModel);
                     user = users.get(0);
                     setUserName(String.format("%s %s", user.first_name, user.last_name));
-                    setTitle(String.format("%s / %s %s", getString(R.string.app_name), user.first_name, user.last_name));
                 } catch (ClassCastException e) {
                     Log.e(TAG, String.format(Locale.US, "onComplete: %s", e));
                 }
@@ -213,12 +225,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setUserName(final String text) {
-        tvUserName.setText(text);
+        tvVkUserName.setText(text);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.load_friends && user != null) {
+        switch (item.getItemId()) {
+            case R.id.load_friends:
+                return loadAlbums();
+            case R.id.logout:
+                return logoutVk();
+            case R.id.login:
+                tryLogin();
+                return true;
+        }
+
+        return false;
+    }
+
+    private void onLoginStateChanged() {
+        if (VKSdk.isLoggedIn()) {
+            requestUserName();
+        } else {
+            user = null;
+        }
+        updateUI();
+    }
+
+    private boolean logoutVk() {
+        VKSdk.logout();
+        onLoginStateChanged();
+        return true;
+    }
+
+    private boolean loadAlbums() {
+        if (user != null) {
             VKApiFriends friends = new VKApiFriends();
             VKRequest request; //= friends.get(VKParameters.from(VKApiConst.USER_IDS, user.id));
 //            request = friends.get(VKParameters.from(VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo"));
@@ -247,8 +288,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
             return true;
-        }https://vk.com/id
-
+        }
         return false;
     }
 }

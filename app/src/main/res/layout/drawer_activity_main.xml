@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/main_content_coordinator"
+    <include layout="@layout/drawer_content_coordinator"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -15,6 +15,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/menu_navigation"
+        app:headerLayout="@layout/drawer_navigation_header"
         />
         <!--android:fitsSystemWindows="true"-->
 
