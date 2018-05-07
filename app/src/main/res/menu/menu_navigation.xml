@@ -5,9 +5,14 @@
     <group android:id="@+id/logged_in" android:visible="false">
 
         <item
-            android:id="@+id/load_friends"
+            android:id="@+id/load_albums"
             android:orderInCategory="100"
-            android:title="Load friends"
+            android:title="Load albums"
+            app:showAsAction="never" />
+        <item
+            android:id="@+id/load_followers"
+            android:orderInCategory="100"
+            android:title="Load followers"
             app:showAsAction="never" />
         <item
             android:orderInCategory="110"
