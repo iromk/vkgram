@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.load_albums:
                 return loadAlbums();
             case R.id.load_followers:
-                return loadFriends();
+                return loadFollowers();
             case R.id.logout:
                 return logoutVk();
             case R.id.login:
@@ -276,7 +276,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private boolean loadAlbums() {
         if (user != null) {
-            VKApiFriends friends = new VKApiFriends();
             VKRequest request; //= friends.get(VKParameters.from(VKApiConst.USER_IDS, user.id));
 //            request = friends.get(VKParameters.from(VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo"));
 //            VKApiPhotos photos = new VKApiPhotos();
@@ -308,18 +307,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
-    private boolean loadFriends() {
+    private boolean loadFollowers() {
         if (user != null) {
-//            VKRequest request = new VKApiFriends().get(VKParameters.from(VKApiConst.USER_IDS, 1));
-//            VKApiFriends friends = new VKApiFriends();
-            VKApiUsers friends = new VKApiUsers();
-//            VKRequest request; //= friends.get(VKParameters.from(VKApiConst.USER_IDS, user.id));
-//            VKRequest request = friends.get(VKParameters.from(VKApiConst.USER_ID, 1, VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo"));
             VKRequest request = new VKRequest("users.getFollowers");
-            request.addExtraParameters(VKParameters.from(VKApiConst.USER_ID, 1, VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo"));
+            request.addExtraParameters(
+                    VKParameters.from(VKApiConst.USER_ID, 1,
+                                      VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo",
+                                      VKApiConst.COUNT, 3
+                    ));
             request.setModelClass(VKUsersArray.class);
             try {
-                Log.i(TAG, "loadFriends:\n"+request.getPreparedRequest().getQuery().toString());
+                Log.i(TAG, "loadFollowers:\n"+request.getPreparedRequest().getQuery().toString());
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -327,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onComplete(VKResponse response) {
                     VKUsersArray users = (VKUsersArray) (response.parsedModel);
-                    Log.d(TAG, "onComplete: loadFriends");
+                    Log.d(TAG, "onComplete: loadFollowers " + users.size());
                     edResponseJson.append(response.parsedModel.getClass().toString());
                     edResponseJson.append("\n");
                     edResponseJson.append(response.json.toString());
@@ -337,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onError(VKError error) {
-                    Log.e(TAG, "onError: loadFriends " + error);
+                    Log.e(TAG, "onError: loadFollowers " + error);
                     super.onError(error);
                 }
             });
@@ -346,9 +344,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 }
-//https://api.vk.com/method/photos.get?user_id=29621442&v=5.52&album_id=saved
-//https://api.vk.com/method/photos.get?user_id=455492428&v=5.52&album_id=saved
-//https://api.vk.com/method/photos.getAlbums?owner_id=455492428&v=5.52&count=10&need_system=1
-//https://vk.com/friends?id=&section=all
-//https://api.vk.com/method/friends.get?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
-//https://api.vk.com/method/friends.get?user_id=1&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
+
+/**
+https://api.vk.com/method/photos.get?user_id=455492428&v=5.52&album_id=saved
+https://api.vk.com/method/photos.getAlbums?owner_id=455492428&v=5.52&count=10&need_system=1
+https://vk.com/friends?id=&section=all
+https://api.vk.com/method/friends.get?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
+https://api.vk.com/method/friends.get?user_id=1&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
+*/
