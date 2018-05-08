@@ -12,7 +12,7 @@
         <item
             android:id="@+id/load_followers"
             android:orderInCategory="100"
-            android:title="Load followers"
+            android:title="Paolo's followers"
             app:showAsAction="never" />
         <item
             android:orderInCategory="110"
