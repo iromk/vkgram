@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt(ThemeSelectActivity.KEY_THEME_ID, theme);
-        outState.putParcelable(KEY_VK_FOLLOWERS, vkFollowers);
+        if(vkFollowers != null) outState.putParcelable(KEY_VK_FOLLOWERS, vkFollowers);
         super.onSaveInstanceState(outState);
     }
 
