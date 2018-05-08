@@ -34,17 +34,20 @@ public class FollowersAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Log.d(TAG, "onCreateViewHolder: ");
-        CardView cvFollower = ((ViewHolder) holder).cvFollower;
-        TextView tvUsername = cvFollower.findViewById(R.id.card_follower_user_name);
-        TextView tvCity = cvFollower.findViewById(R.id.card_follower_city);
-        final VKApiUserFull follower = vkFollowers.get(position);
-        if(follower != null) {
+        final VKApiUserFull vkFollower = vkFollowers.get(position);
+        final CardView cvFollower = ((ViewHolder) holder).cvFollower;
+        final TextView tvUsername = cvFollower.findViewById(R.id.card_follower_user_name);
+        final TextView tvCity = cvFollower.findViewById(R.id.card_follower_city);
+        final TextView tvPosition = cvFollower.findViewById(R.id.card_position);
+
+        tvPosition.setText(String.valueOf(position));
+        if(vkFollower != null) {
             tvUsername.setText(
                 String.format("%s %s",
-                    follower.first_name,
-                    follower.last_name));
-            if(follower.city != null)
-                tvCity.setText(follower.city.title);
+                    vkFollower.first_name,
+                    vkFollower.last_name));
+            if(vkFollower.city != null)
+                tvCity.setText(vkFollower.city.title);
         }
 
     }

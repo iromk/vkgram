@@ -3,6 +3,7 @@ package pro.xite.dev.vkgram;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.FloatingActionButton;
@@ -44,6 +45,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
+    public static final String KEY_VK_FOLLOWERS = "VK_FOLLOWERS";
 
     private boolean isResumed = false;
 
@@ -57,23 +59,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     TextView tvVkUserName;
     private LinearLayoutManager layoutManager;
+    private VKUsersArray vkFollowers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         final SharedPreferences prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
+
+        setContentView(R.layout.drawer_activity_main);
+        ButterKnife.bind(this);
 
         if(savedInstanceState != null) {
             theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
             prefSettings.edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
+            if(savedInstanceState.containsKey(KEY_VK_FOLLOWERS)) {
+                vkFollowers = savedInstanceState.getParcelable(KEY_VK_FOLLOWERS);
+            }
         } else {
             @StyleRes int savedTheme = prefSettings.getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
             if(savedTheme != ThemeSelectActivity.NONE)
                 theme = savedTheme;
         }
         setTheme(theme);
-        setContentView(R.layout.drawer_activity_main);
-        ButterKnife.bind(this);
 
         initUI();
         initSession();
@@ -111,10 +119,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void initRecycler() {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        //  specify  an  adapter ( see  also  next  example)
-//        recyclerView.setAdapter(new FollowersAdapter());
-//        mAdapter = new MyAdapter(myDataset);
-//        mRecyclerView.setAdapter(mAdapter) ;
+        if(vkFollowers != null) {
+            recyclerView.setAdapter(new FollowersAdapter(vkFollowers));
+        }
     }
 
     private void updateUI() {
@@ -197,8 +204,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putInt(ThemeSelectActivity.KEY_THEME_ID, theme);
+        outState.putParcelable(KEY_VK_FOLLOWERS, vkFollowers);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -288,10 +296,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private boolean loadAlbums() {
         if (user != null) {
-            VKRequest request; //= friends.get(VKParameters.from(VKApiConst.USER_IDS, user.id));
-//            request = friends.get(VKParameters.from(VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo"));
-//            VKApiPhotos photos = new VKApiPhotos();
-//            request = new VKRequest("photos.get", VKParameters.from(VKApiConst.USER_ID, user.id, VKApiConst.ALBUM_ID, "wall"), VKPhotoArray.class);
+            VKRequest request;
             request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, user.id, "need_system", "1"));//, VKApiPhotoAlbum.class);
             request.getPreparedParameters().remove("access_token");
             try {
@@ -302,10 +307,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             request.executeWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
-//                    VKUsersArray users = (VKUsersArray) (response.parsedModel);
                     VKPhotoArray users = (VKPhotoArray) (response.parsedModel);
-//                    edResponseJson.append(response.json.toString());
-//                    edResponseJson.append("\n\n");
                     super.onComplete(response);
                 }
 
@@ -337,13 +339,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             request.executeWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
-                    VKUsersArray users = (VKUsersArray) (response.parsedModel);
-                    Log.d(TAG, "onComplete: loadFollowers " + users.size());
-//                    edResponseJson.append(response.parsedModel.getClass().toString());
-//                    edResponseJson.append("\n");
-//                    edResponseJson.append(response.json.toString());
-//                    edResponseJson.append("\n\n");
-                    recyclerView.setAdapter(new FollowersAdapter(users));
+                    vkFollowers = (VKUsersArray) (response.parsedModel);
+                    Log.d(TAG, "onComplete: loadFollowers " + vkFollowers.size());
+                    recyclerView.setAdapter(new FollowersAdapter(vkFollowers));
                     super.onComplete(response);
                 }
 
