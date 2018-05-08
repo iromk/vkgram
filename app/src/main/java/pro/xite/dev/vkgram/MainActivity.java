@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, user.id, "need_system", "1"));//, VKApiPhotoAlbum.class);
             request.getPreparedParameters().remove("access_token");
             try {
-                Log.i(TAG, "loadAlbums:\n"+request.getPreparedRequest().getQuery().toString());
+                Log.i(TAG, String.format("loadAlbums:\n%s", request.getPreparedRequest().getQuery().toString()));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -332,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     ));
             request.setModelClass(VKUsersArray.class);
             try {
-                Log.i(TAG, "loadFollowers:\n"+request.getPreparedRequest().getQuery().toString());
+                Log.i(TAG, String.format("loadFollowers:\n%s", request.getPreparedRequest().getQuery().toString()));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
