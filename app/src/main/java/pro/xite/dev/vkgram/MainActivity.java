@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.toolbar_main) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
     @BindView(R.id.drawer_main_nav_view) NavigationView navigationView;
-    @BindView(R.id.response_json) TextView edResponseJson;
+//    @BindView(R.id.response_json) TextView edResponseJson;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     TextView tvVkUserName;
@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         //  specify  an  adapter ( see  also  next  example)
+//        recyclerView.setAdapter(new FollowersAdapter());
 //        mAdapter = new MyAdapter(myDataset);
 //        mRecyclerView.setAdapter(mAdapter) ;
     }
@@ -303,8 +304,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onComplete(VKResponse response) {
 //                    VKUsersArray users = (VKUsersArray) (response.parsedModel);
                     VKPhotoArray users = (VKPhotoArray) (response.parsedModel);
-                    edResponseJson.append(response.json.toString());
-                    edResponseJson.append("\n\n");
+//                    edResponseJson.append(response.json.toString());
+//                    edResponseJson.append("\n\n");
                     super.onComplete(response);
                 }
 
@@ -324,7 +325,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             request.addExtraParameters(
                     VKParameters.from(VKApiConst.USER_ID, 1,
                                       VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo",
-                                      VKApiConst.COUNT, 3
+                                      VKApiConst.COUNT, 333,
+                                      VKApiConst.OFFSET, 0
                     ));
             request.setModelClass(VKUsersArray.class);
             try {
@@ -337,10 +339,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onComplete(VKResponse response) {
                     VKUsersArray users = (VKUsersArray) (response.parsedModel);
                     Log.d(TAG, "onComplete: loadFollowers " + users.size());
-                    edResponseJson.append(response.parsedModel.getClass().toString());
-                    edResponseJson.append("\n");
-                    edResponseJson.append(response.json.toString());
-                    edResponseJson.append("\n\n");
+//                    edResponseJson.append(response.parsedModel.getClass().toString());
+//                    edResponseJson.append("\n");
+//                    edResponseJson.append(response.json.toString());
+//                    edResponseJson.append("\n\n");
+                    recyclerView.setAdapter(new FollowersAdapter(users));
                     super.onComplete(response);
                 }
 
@@ -362,4 +365,6 @@ https://api.vk.com/method/photos.getAlbums?owner_id=455492428&v=5.52&count=10&ne
 https://vk.com/friends?id=&section=all
 https://api.vk.com/method/friends.get?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
 https://api.vk.com/method/friends.get?user_id=1&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
-*/
+https://api.vk.com/method/users.getFollowers?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto&count=3&offset=0&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
+
+ */
