@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -12,27 +13,25 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKServiceActivity;
-import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiUserFull;
-import com.vk.sdk.api.model.VKList;
 import com.vk.sdk.api.model.VKPhotoArray;
 import com.vk.sdk.api.model.VKUsersArray;
 
@@ -49,16 +48,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private boolean isResumed = false;
 
+    private VKApiUserFull user;
+
     private @StyleRes int theme = R.style.VkgramThemeGreengo;
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
     @BindView(R.id.drawer_main_nav_view) NavigationView navigationView;
-//    @BindView(R.id.response_json) TextView edResponseJson;
     @BindView(R.id.fab) FloatingActionButton fab;
-//    @BindView(R.id.recycler_view) RecyclerView recyclerView;
+    @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbarLayout;
+    @BindView(R.id.vk_active_user_name) TextView tvActiveUserName;
+    @BindView(R.id.vk_active_user_avatar) NetworkImageView nivActiveUserAvatar;
     TextView tvVkUserName;
-//    private LinearLayoutManager layoutManager;
     private VKUsersArray vkFollowers;
 
     @Override
@@ -93,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         updateUI();
 
         setSupportActionBar(toolbar);
+        collapsingToolbarLayout.setTitle(getString(R.string.app_name));
+        collapsingToolbarLayout.setExpandedTitleGravity(Gravity.END|Gravity.BOTTOM);
+
         final ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerMainLayout,
@@ -230,18 +234,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    VKApiUserFull user;
     private void requestUserName() {
-        final String uid = VKAccessToken.currentToken().userId;
-        VKRequest request = VKApi.users().get();//VKParameters.from(VKApiConst.USER_IDS, uid), VKApiUser.class);
+        requestUserName(VKAccessToken.currentToken().userId);
+    }
+
+    private void requestUserName(String uid) {
+        VKRequest request = new VKRequest("users.get",
+        VKParameters.from(
+                VKApiConst.USER_ID, uid,
+                VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo_200"),
+        VKUsersArray.class);
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             @SuppressWarnings("unchecked")
             public void onComplete(VKResponse response) {
                 try {
-                    VKList<VKApiUserFull> users = (VKList) (response.parsedModel);
+                    VKUsersArray users = (VKUsersArray) (response.parsedModel);
                     user = users.get(0);
-                    setUserName(String.format("%s %s", user.first_name, user.last_name));
+                    setActiveUser();
                 } catch (ClassCastException e) {
                     Log.e(TAG, String.format(Locale.US, "onComplete: %s", e));
                 }
@@ -249,8 +259,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    private void setUserName(final String text) {
-        tvVkUserName.setText(text);
+    private void setActiveUser() {
+        tvVkUserName.setText(String.format("%s %s", user.first_name, user.last_name));
+        tvActiveUserName.setText(String.format("%s %s", user.first_name, user.last_name));
+        nivActiveUserAvatar.setImageUrl(user.photo_200, Application.getImageLoader());
     }
 
     @Override
@@ -271,6 +283,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private boolean inflateFollowersFragment() {
+        requestUserName("1");
         final FollowersFragment ff = FollowersFragment.newInstance(user);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_frame, ff);
@@ -331,5 +344,6 @@ https://vk.com/friends?id=&section=all
 https://api.vk.com/method/friends.get?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
 https://api.vk.com/method/friends.get?user_id=1&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
 https://api.vk.com/method/users.getFollowers?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto_100&count=333&offset=0&access_token=592a8ad912b05787d46bef75dbb203d409617a2135c1e3de9cfea31ad1ef8b66d69960900fd4e09357618&v=5.21&lang=en&https=1
+https://api.vk.com/method/users.get?user_id=455492428&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto_100&count=333&offset=0&access_token=592a8ad912b05787d46bef75dbb203d409617a2135c1e3de9cfea31ad1ef8b66d69960900fd4e09357618&v=5.21&lang=en&https=1
 
  */
