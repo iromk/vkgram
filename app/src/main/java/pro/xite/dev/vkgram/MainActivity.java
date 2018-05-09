@@ -3,7 +3,6 @@ package pro.xite.dev.vkgram;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.FloatingActionButton;
@@ -326,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             VKRequest request = new VKRequest("users.getFollowers");
             request.addExtraParameters(
                     VKParameters.from(VKApiConst.USER_ID, 1,
-                                      VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo",
+                                      VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo_200",
                                       VKApiConst.COUNT, 333,
                                       VKApiConst.OFFSET, 0
                     ));
@@ -363,6 +362,6 @@ https://api.vk.com/method/photos.getAlbums?owner_id=455492428&v=5.52&count=10&ne
 https://vk.com/friends?id=&section=all
 https://api.vk.com/method/friends.get?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
 https://api.vk.com/method/friends.get?user_id=1&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
-https://api.vk.com/method/users.getFollowers?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto&count=3&offset=0&access_token=7a1838a401bcf4db0aca3c94d147e2cac585a281d90511de43358b7862b4e8c509580757556317d7b9659&v=5.21&lang=en&https=1
+https://api.vk.com/method/users.getFollowers?user_id=1&fields=id%2Cfirst_name%2Clast_name%2Csex%2Cbdate%2Ccity%2Cphoto_100&count=333&offset=0&access_token=592a8ad912b05787d46bef75dbb203d409617a2135c1e3de9cfea31ad1ef8b66d69960900fd4e09357618&v=5.21&lang=en&https=1
 
  */
