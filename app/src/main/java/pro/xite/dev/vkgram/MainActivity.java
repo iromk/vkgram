@@ -8,6 +8,7 @@ import android.support.annotation.StyleRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -55,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.drawer_main_nav_view) NavigationView navigationView;
 //    @BindView(R.id.response_json) TextView edResponseJson;
     @BindView(R.id.fab) FloatingActionButton fab;
-    @BindView(R.id.recycler_view) RecyclerView recyclerView;
+//    @BindView(R.id.recycler_view) RecyclerView recyclerView;
     TextView tvVkUserName;
-    private LinearLayoutManager layoutManager;
+//    private LinearLayoutManager layoutManager;
     private VKUsersArray vkFollowers;
 
     @Override
@@ -112,15 +113,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        initRecycler();
-    }
-
-    private void initRecycler() {
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        if(vkFollowers != null) {
-            recyclerView.setAdapter(new FollowersAdapter(vkFollowers));
-        }
     }
 
     private void updateUI() {
@@ -267,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.load_albums:
                 return loadAlbums();
             case R.id.load_followers:
-                return loadFollowers();
+                return inflateFollowersFragment();
             case R.id.logout:
                 return logoutVk();
             case R.id.login:
@@ -276,6 +268,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return false;
+    }
+
+    private boolean inflateFollowersFragment() {
+        final FollowersFragment ff = FollowersFragment.newInstance(user);
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_frame, ff);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.commit();
+        return true;
     }
 
     private void onLoginStateChanged() {
@@ -320,40 +321,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
-    private boolean loadFollowers() {
-        if (user != null) {
-            VKRequest request = new VKRequest("users.getFollowers");
-            request.addExtraParameters(
-                    VKParameters.from(VKApiConst.USER_ID, 1,
-                                      VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo_200",
-                                      VKApiConst.COUNT, 333,
-                                      VKApiConst.OFFSET, 0
-                    ));
-            request.setModelClass(VKUsersArray.class);
-            try {
-                Log.i(TAG, String.format("loadFollowers:\n%s", request.getPreparedRequest().getQuery().toString()));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            request.executeWithListener(new VKRequest.VKRequestListener() {
-                @Override
-                public void onComplete(VKResponse response) {
-                    vkFollowers = (VKUsersArray) (response.parsedModel);
-                    Log.d(TAG, "onComplete: loadFollowers " + vkFollowers.size());
-                    recyclerView.setAdapter(new FollowersAdapter(vkFollowers));
-                    super.onComplete(response);
-                }
 
-                @Override
-                public void onError(VKError error) {
-                    Log.e(TAG, "onError: loadFollowers " + error);
-                    super.onError(error);
-                }
-            });
-            return true;
-        }
-        return false;
-    }
 }
 
 /**

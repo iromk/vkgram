@@ -62,13 +62,15 @@ public class FollowersAdapter extends RecyclerView.Adapter {
         final TextView tvUsername = cvFollower.findViewById(R.id.card_follower_user_name);
         final TextView tvCity = cvFollower.findViewById(R.id.card_follower_city);
         final TextView tvPosition = cvFollower.findViewById(R.id.card_position);
-//        final ImageView ivAvatar = cvFollower.findViewById(R.id.card_avatar);
-        final NetworkImageView nivAvatar = (NetworkImageView) cvFollower.findViewById(R.id.card_avatar);
+        final NetworkImageView nivAvatar = cvFollower.findViewById(R.id.card_avatar);
 
         tvPosition.setText(String.valueOf(position));
+
         if(vkFollower != null) {
+
             Log.w(TAG, String.format("onBindViewHolder: %s %s [%s]",
                     vkFollower.first_name, vkFollower.last_name, vkFollower.photo_200));
+
             if(vkFollower.photo_200.length() > 50) {
                 Log.d(TAG, String.format("vkFollower.photo_200.length() > 50 for %s %s ", vkFollower.first_name, vkFollower.last_name));
                 nivAvatar.setImageUrl(vkFollower.photo_200, mImageLoader);
@@ -90,12 +92,15 @@ public class FollowersAdapter extends RecyclerView.Adapter {
                 }
                 nivAvatar.setImageUrl(null, mImageLoader);
             }
+
             tvUsername.setText(
-                String.format("%s %s",
-                    vkFollower.first_name,
-                    vkFollower.last_name));
+                    String.format("%s %s",
+                            vkFollower.first_name,
+                            vkFollower.last_name));
             if(vkFollower.city != null)
                 tvCity.setText(vkFollower.city.title);
+
+
         }
 
     }
