@@ -32,7 +32,6 @@ public class FollowersFragment extends Fragment {
     private static final String ARG_VKUSER = "vkUser";
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
-    TextView tvVkUserName;
     private LinearLayoutManager layoutManager;
     private VKUsersArray vkFollowers;
     private VKApiUserFull vkUser;

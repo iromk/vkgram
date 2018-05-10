@@ -2,14 +2,18 @@ package pro.xite.dev.vkgram;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,16 +39,22 @@ import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKPhotoArray;
 import com.vk.sdk.api.model.VKUsersArray;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
     public static final String KEY_VK_FOLLOWERS = "VK_FOLLOWERS";
+    private static final int INTENT_IMAGE_CAPTURE = 0x1441;
 
     private boolean isResumed = false;
 
@@ -108,14 +118,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerMainLayout.addDrawerListener(drawerToggle);
         navigationView.setNavigationItemSelectedListener(this);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
     }
 
@@ -184,6 +186,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @OnClick(R.id.fab)
+    void onFabClick(View view) {
+//        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null).show();
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File newPictureFile = null;
+            try {
+                newPictureFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(newPictureFile != null) {
+                Uri fileUri = FileProvider.getUriForFile(
+                        this,
+                        "pro.xite.dev.vkgram.fileprovider",
+                        newPictureFile);
+
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, newPictureFile.toURI());
+                startActivityForResult(takePictureIntent, INTENT_IMAGE_CAPTURE);
+            }
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -204,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onSaveInstanceState(outState);
     }
 
+    //TODO переписать в switch и методы
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.w(TAG, String.format("onActivityResult: requestCode == %d, resultCode == %d", requestCode, resultCode));
@@ -216,7 +243,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             return;
         }
-        if (requestCode == VKServiceActivity.VKServiceType.Authorization.getOuterCode()) {
+        if(requestCode == INTENT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.d(TAG, "onActivityResult: INTENT_IMAGE_CAPTURE'd");
+//            Bitmap bmpPicture = (Bitmap) data.getExtras().get("data");
+
+
+        }
+        if(requestCode == VKServiceActivity.VKServiceType.Authorization.getOuterCode()) {
             VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
                 @Override
                 public void onResult(VKAccessToken res) {
@@ -234,6 +267,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
     private void requestUserName() {
         requestUserName(VKAccessToken.currentToken().userId);
     }
