@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.vk_active_user_avatar) NetworkImageView nivActiveUserAvatar;
     TextView tvVkUserName;
     private VKUsersArray vkFollowers;
+    private File newPictureFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,9 +192,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @OnClick(R.id.fab)
     void onFabClick() {
+        if (newPictureFile != null) throw new AssertionError("newPictureFile is already prepared.");
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File newPictureFile = null;
+            newPictureFile = null;
             try {
                 newPictureFile = createImageFile();
             } catch (IOException e) {
@@ -246,10 +248,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             return;
         }
-        if(requestCode == INTENT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Log.d(TAG, "onActivityResult: INTENT_IMAGE_CAPTURE'd");
-            Snackbar.make(coordinatorLayout, "Picture saved. See local album.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+        if(requestCode == INTENT_IMAGE_CAPTURE) {
+            if(resultCode == RESULT_OK) {
+                Log.d(TAG, "onActivityResult: OK, INTENT_IMAGE_CAPTURE'd");
+                Snackbar.make(coordinatorLayout, "Picture saved. See local album.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            else {
+                Log.d(TAG, "onActivityResult: FAIL, INTENT_IMAGE_CAPTURE'd");
+                Snackbar.make(coordinatorLayout, "Capture canceled.", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                if(!newPictureFile.delete())
+                    throw new AssertionError("Problem deleting canceled newPictureFile");
+            }
+            newPictureFile = null;
         }
         if(requestCode == VKServiceActivity.VKServiceType.Authorization.getOuterCode()) {
             VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
