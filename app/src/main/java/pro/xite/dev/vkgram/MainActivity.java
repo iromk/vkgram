@@ -10,8 +10,10 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.DrawerLayout;
@@ -64,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
+    @BindView(R.id.coordinator_layout) CoordinatorLayout coordinatorLayout;
     @BindView(R.id.drawer_main_nav_view) NavigationView navigationView;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbarLayout;
@@ -187,9 +190,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @OnClick(R.id.fab)
-    void onFabClick(View view) {
-//        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show();
+    void onFabClick() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File newPictureFile = null;
@@ -204,7 +205,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         "pro.xite.dev.vkgram.fileprovider",
                         newPictureFile);
 
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, newPictureFile.toURI());
+                Log.d(TAG, String.format("onFabClick: \nUri: %s\nFile:%s",
+                           fileUri.toString(), newPictureFile.toString()));
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                 startActivityForResult(takePictureIntent, INTENT_IMAGE_CAPTURE);
             }
         }
@@ -245,9 +248,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if(requestCode == INTENT_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Log.d(TAG, "onActivityResult: INTENT_IMAGE_CAPTURE'd");
-//            Bitmap bmpPicture = (Bitmap) data.getExtras().get("data");
-
-
+            Snackbar.make(coordinatorLayout, "Picture saved. See local album.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
         }
         if(requestCode == VKServiceActivity.VKServiceType.Authorization.getOuterCode()) {
             VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
@@ -268,19 +270,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        final String imageFileName = "JPEG_" + timeStamp + "_";
+        final File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+            );
     }
     private void requestUserName() {
         requestUserName(VKAccessToken.currentToken().userId);
