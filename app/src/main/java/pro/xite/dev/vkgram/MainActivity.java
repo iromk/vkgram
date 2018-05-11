@@ -14,8 +14,13 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -72,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.vk_active_user_name) TextView tvActiveUserName;
     @BindView(R.id.vk_active_user_avatar) NetworkImageView nivActiveUserAvatar;
+    @BindView(R.id.tab_layout) TabLayout tabLayout;
+    @BindView(R.id.viewpager) ViewPager viewPager;
     TextView tvVkUserName;
     private VKUsersArray vkFollowers;
     private File newPictureFile;
@@ -109,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setSupportActionBar(toolbar);
         collapsingToolbarLayout.setTitle(getString(R.string.app_name));
-        collapsingToolbarLayout.setExpandedTitleGravity(Gravity.END|Gravity.BOTTOM);
+        collapsingToolbarLayout.setExpandedTitleGravity(Gravity.END|Gravity.CENTER_VERTICAL);
 
         final ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -123,6 +130,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerMainLayout.addDrawerListener(drawerToggle);
         navigationView.setNavigationItemSelectedListener(this);
 
+//        tabLayout.setupWithViewPager(viewPager);
+//        initTabs();
+    }
+
+    private void initTabs() {
+        Fragment f = FollowersFragment.newInstance(user);
+        ViewPagerAdapter fpa = new ViewPagerAdapter(getSupportFragmentManager());
+        fpa.addFragment(f);
+        viewPager.setAdapter(fpa);
+        TabLayout.Tab tab = tabLayout.newTab();
+        tabLayout.setupWithViewPager(viewPager);
+//        tab.setText("followers");
+//        tabLayout.addTab(tab);
     }
 
     private void updateUI() {
@@ -328,7 +348,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.load_albums:
                 return loadAlbums();
             case R.id.load_followers:
-                return inflateFollowersFragment();
+                requestUserName("1");
+                initTabs();
+                return true;
+//                return inflateFollowersFragment();
             case R.id.logout:
                 return logoutVk();
             case R.id.login:
@@ -340,10 +363,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private boolean inflateFollowersFragment() {
+        initTabs();
+
         requestUserName("1");
         final FollowersFragment ff = FollowersFragment.newInstance(user);
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_frame, ff);
+//        ft.replace(R.id.fragment_frame, ff);
+        ft.replace(R.id.viewpager, ff);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         ft.commit();
         return true;
