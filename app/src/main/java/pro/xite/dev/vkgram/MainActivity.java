@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView tvVkUserName;
     private VKUsersArray vkFollowers;
     private File newPictureFile;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,17 +131,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerMainLayout.addDrawerListener(drawerToggle);
         navigationView.setNavigationItemSelectedListener(this);
 
-//        tabLayout.setupWithViewPager(viewPager);
-//        initTabs();
+        initTabs();
     }
 
     private void initTabs() {
-        Fragment f = FollowersFragment.newInstance(user);
-        ViewPagerAdapter fpa = new ViewPagerAdapter(getSupportFragmentManager());
-        fpa.addFragment(f);
-        viewPager.setAdapter(fpa);
-        TabLayout.Tab tab = tabLayout.newTab();
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+//        TabLayout.Tab tab = tabLayout.newTab();
 //        tab.setText("followers");
 //        tabLayout.addTab(tab);
     }
@@ -349,9 +347,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return loadAlbums();
             case R.id.load_followers:
                 requestUserName("1");
-                initTabs();
+                final Fragment f = FollowersFragment.newInstance(user);
+                viewPagerAdapter.addFragment(f);
+                viewPagerAdapter.notifyDataSetChanged();
                 return true;
-//                return inflateFollowersFragment();
             case R.id.logout:
                 return logoutVk();
             case R.id.login:
@@ -360,19 +359,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return false;
-    }
-
-    private boolean inflateFollowersFragment() {
-        initTabs();
-
-        requestUserName("1");
-        final FollowersFragment ff = FollowersFragment.newInstance(user);
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//        ft.replace(R.id.fragment_frame, ff);
-        ft.replace(R.id.viewpager, ff);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        ft.commit();
-        return true;
     }
 
     private void onLoginStateChanged() {
