@@ -5,9 +5,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ThemeSelectActivity extends AppCompatActivity {
 
@@ -20,21 +24,24 @@ public class ThemeSelectActivity extends AppCompatActivity {
     private static final String TAG = ThemeSelectActivity.class.getSimpleName();
     private @StyleRes int newTheme = Integer.MIN_VALUE;
 
+    @BindView(R.id.toolbar_main) Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setResult(RESULT_NOTHING_CHANGED);
         if(savedInstanceState != null) {
             newTheme = savedInstanceState.getInt(KEY_THEME_ID);
-            if(newTheme != NONE)
-                setTheme(newTheme);
+            if(newTheme != NONE) setTheme(newTheme);
         } else {
-            final SharedPreferences prefSettings = getSharedPreferences("HW2.SETTINGS", MODE_PRIVATE);
+            final SharedPreferences prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
             final @StyleRes int savedTheme = prefSettings.getInt(KEY_THEME_ID, NONE);
-            if(savedTheme != NONE)
-                setTheme(savedTheme);
+            if(savedTheme != NONE) setTheme(savedTheme);
         }
         setContentView(R.layout.activity_theme_select);
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        if(getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void onButtonClick(View view) {

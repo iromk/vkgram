@@ -1,7 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE resources [
+    <!ENTITY app_name "VKGram">
+    ]>
 <resources>
-    <string name="app_name">VKgram</string>
+    <string name="app_name">&app_name;</string>
     <string name="menu_action_settings">Settings</string>
     <string name="theme_select_title">Select theme</string>
     <string name="theme_select_indigo_button">Indigo</string>
     <string name="theme_select_greengo_button">Greengo</string>
+    <string name="shared_prefs_default">&app_name;.default</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="fab_behavior">pro.xite.dev.vkgram.FabBehavior</string>
 </resources>

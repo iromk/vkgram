@@ -1,12 +1,12 @@
 <resources>
 
     <style name="VkgramThemeGreengo" parent="VkgramBaseTheme">
-        <item name="android:textSize">24sp</item>
+        <!--<item name="android:textSize">24sp</item>-->
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="VkgramThemeGreengo.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="VkgramThemeGreengo.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>
