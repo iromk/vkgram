@@ -2,6 +2,7 @@ package pro.xite.dev.vkgram;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
@@ -32,7 +32,6 @@ public class FollowersFragment extends Fragment {
     private static final String ARG_VKUSER = "vkUser";
 
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
     private VKUsersArray vkFollowers;
     private VKApiUserFull vkUser;
 
@@ -56,8 +55,7 @@ public class FollowersFragment extends Fragment {
     }
 
     private void initRecycler(View view) {
-        layoutManager = new LinearLayoutManager(view.getContext());
-        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         if(vkFollowers != null) {
             recyclerView.setAdapter(new FollowersAdapter(vkFollowers));
         }
@@ -65,8 +63,8 @@ public class FollowersFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_main, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.content_recycler, container, false);
         ButterKnife.bind(this, view);
         initRecycler(view);
         loadFollowers();
@@ -104,6 +102,5 @@ public class FollowersFragment extends Fragment {
                 }
             });
         }
-        return;
     }
 }

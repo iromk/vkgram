@@ -344,11 +344,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.load_albums:
+                viewPagerAdapter.addFragment(
+                        "My pics",
+                        LocalPicturesAlbumFragment.newInstance());
+                viewPagerAdapter.notifyDataSetChanged();
                 return loadAlbums();
             case R.id.load_followers:
                 requestUserName("1");
                 final Fragment f = FollowersFragment.newInstance(user);
-                viewPagerAdapter.addFragment(f);
+                viewPagerAdapter.addFragment("Paolo's followers", f);
                 viewPagerAdapter.notifyDataSetChanged();
                 return true;
             case R.id.logout:
