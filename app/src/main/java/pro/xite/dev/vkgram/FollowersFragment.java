@@ -31,6 +31,8 @@ public class FollowersFragment extends Fragment {
 
     private static final String ARG_VKUSER = "vkUser";
 
+    public static final String KEY_VK_FOLLOWERS = "VK_FOLLOWERS";
+
     @BindView(R.id.recycler_view) RecyclerView recyclerView;
     private VKUsersArray vkFollowers;
     private VKApiUserFull vkUser;
@@ -49,30 +51,45 @@ public class FollowersFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate fragment");
         if (getArguments() != null) {
             vkUser = getArguments().getParcelable(ARG_VKUSER);
         }
     }
 
     private void initRecycler(View view) {
+        Log.d(TAG, "initRecycler: ");
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         if(vkFollowers != null) {
             recyclerView.setAdapter(new FollowersAdapter(vkFollowers));
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState");
+        if(vkFollowers != null) outState.putParcelable(KEY_VK_FOLLOWERS, vkFollowers);
+        super.onSaveInstanceState(outState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_recycler, container, false);
+        if(savedInstanceState != null && savedInstanceState.containsKey(KEY_VK_FOLLOWERS)) {
+            vkFollowers = savedInstanceState.getParcelable(KEY_VK_FOLLOWERS);
+        } else {
+            loadFollowers();
+        }
         ButterKnife.bind(this, view);
         initRecycler(view);
-        loadFollowers();
         return view;
     }
 
     private void loadFollowers() {
+        Log.d(TAG, "loadFollowers");
         if (vkUser != null) {
+            Log.d(TAG, "loadFollowers (vkUser != null)");
             VKRequest request = new VKRequest("users.getFollowers");
             request.addExtraParameters(
                     VKParameters.from(VKApiConst.USER_ID, 1,

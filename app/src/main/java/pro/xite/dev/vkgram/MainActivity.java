@@ -2,7 +2,6 @@ package pro.xite.dev.vkgram;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,10 +15,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -29,7 +25,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -60,14 +55,15 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
-    public static final String KEY_VK_FOLLOWERS = "VK_FOLLOWERS";
     private static final int INTENT_IMAGE_CAPTURE = 0x1441;
 
     private boolean isResumed = false;
 
+    @KeepState("usr")
     private VKApiUserFull user;
 
-    private @StyleRes int theme = R.style.VkgramThemeGreengo;
+    @StyleRes
+    private int theme = R.style.VkgramThemeGreengo;
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
@@ -80,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.tab_layout) TabLayout tabLayout;
     @BindView(R.id.viewpager) ViewPager viewPager;
     TextView tvVkUserName;
-    private VKUsersArray vkFollowers;
     private File newPictureFile;
     private ViewPagerAdapter viewPagerAdapter;
 
@@ -93,21 +88,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.drawer_activity_main);
         ButterKnife.bind(this);
 
+
+        Log.d(TAG, "onCreate:");
+
+        initUI();
+        initSession();
+
         if(savedInstanceState != null) {
+            Log.d(TAG, "savedInstanceState != null");
             theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
             prefSettings.edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
-            if(savedInstanceState.containsKey(KEY_VK_FOLLOWERS)) {
-                vkFollowers = savedInstanceState.getParcelable(KEY_VK_FOLLOWERS);
+            StateKeeper.unbundle(this, savedInstanceState);
+            if(user != null) {
+                setActiveUser();
+//                final Fragment f = FollowersFragment.newInstance(user);
+                viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+                viewPagerAdapter.addFragment("Paolo's followers", getSupportFragmentManager().getFragments().get(0));
+                viewPagerAdapter.notifyDataSetChanged();
+                viewPager.setAdapter(viewPagerAdapter);
+                tabLayout.setupWithViewPager(viewPager);
             }
         } else {
+            initTabs();
             @StyleRes int savedTheme = prefSettings.getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
             if(savedTheme != ThemeSelectActivity.NONE)
                 theme = savedTheme;
         }
         setTheme(theme);
 
-        initUI();
-        initSession();
     }
 
     private void initUI() {
@@ -130,8 +138,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerMainLayout.addDrawerListener(drawerToggle);
         navigationView.setNavigationItemSelectedListener(this);
-
-        initTabs();
     }
 
     private void initTabs() {
@@ -189,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         isResumed = true;
         if (VKSdk.isLoggedIn()) {
             Log.d(TAG, "onResume: logged in");
-            requestUserName();
+            if(user == null) requestUserName();
         } else {
             Log.d(TAG, "onResume: not logged in");
             tryLogin();
@@ -248,8 +254,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        StateKeeper.bundle(this, outState);
+        Log.d(TAG, "onSaveInstanceState: ");
         outState.putInt(ThemeSelectActivity.KEY_THEME_ID, theme);
-        if(vkFollowers != null) outState.putParcelable(KEY_VK_FOLLOWERS, vkFollowers);
+//        outState.putParcelable("usr", user);
         super.onSaveInstanceState(outState);
     }
 

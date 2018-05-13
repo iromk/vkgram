@@ -84,7 +84,7 @@ public class FollowersAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "getItemCount: ");
+//        Log.d(TAG, "getItemCount: ");
         return vkFollowers.getCount();
     }
 
