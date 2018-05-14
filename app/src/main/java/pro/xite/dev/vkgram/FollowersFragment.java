@@ -31,6 +31,7 @@ public class FollowersFragment extends Fragment {
     }
 
     public static FollowersFragment newInstance(VKApiUserFull vkUser) {
+        Log.d(TAG, "newInstance:");
         FollowersFragment ff = new FollowersFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_VKUSER, vkUser);
@@ -50,6 +51,7 @@ public class FollowersFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
         final View view = inflater.inflate(R.layout.content_recycler, container, false);
 
         ButterKnife.bind(this, view);

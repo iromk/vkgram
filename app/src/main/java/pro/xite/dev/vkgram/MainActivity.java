@@ -101,10 +101,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             StateKeeper.unbundle(this, savedInstanceState);
             if(user != null) {
                 setActiveUser();
-//                final Fragment f = FollowersFragment.newInstance(user);
+                final Fragment f = FollowersFragment.newInstance(user);
                 viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-                viewPagerAdapter.addFragment("Paolo's followers", getSupportFragmentManager().getFragments().get(0));
-                viewPagerAdapter.notifyDataSetChanged();
+//                viewPagerAdapter.addFragment("Paolo's followers", getSupportFragmentManager().getFragments().get(0));
+//                viewPagerAdapter.addFragment("Paolo's", f);
+//                viewPagerAdapter.notifyDataSetChanged();
                 viewPager.setAdapter(viewPagerAdapter);
                 tabLayout.setupWithViewPager(viewPager);
             }
@@ -362,6 +363,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 final Fragment f = FollowersFragment.newInstance(user);
                 viewPagerAdapter.addFragment("Paolo's followers", f);
                 viewPagerAdapter.notifyDataSetChanged();
+                tabLayout.getTabAt(0).setIcon(R.drawable.followers);
+
+
                 return true;
             case R.id.logout:
                 return logoutVk();
