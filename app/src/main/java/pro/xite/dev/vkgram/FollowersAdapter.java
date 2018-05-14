@@ -28,58 +28,52 @@ public class FollowersAdapter extends RecyclerView.Adapter {
         Log.d(TAG, "onCreateViewHolder: ");
         CardView cvFollower = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_follower, parent, false);
-        return new ViewHolder(cvFollower);
+        return new BetterViewHolder(cvFollower);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder: ");
+
         final VKApiUserFull vkFollower = vkFollowers.get(position);
-        final CardView cvFollower = ((ViewHolder) holder).cvFollower;
-        final TextView tvUsername = cvFollower.findViewById(R.id.card_follower_user_name);
-        final TextView tvCity = cvFollower.findViewById(R.id.card_follower_city);
-        final TextView tvPosition = cvFollower.findViewById(R.id.card_position);
-        final NetworkImageView nivAvatar = cvFollower.findViewById(R.id.card_avatar);
+        final BetterViewHolder vh = (BetterViewHolder) holder;
 
-        tvPosition.setText(String.valueOf(position));
+        vh.tvPosition.setText(String.valueOf(position));
 
-        if(vkFollower != null) {
+        if (vkFollower != null) {
 
             Log.w(TAG, String.format("onBindViewHolder: %s %s [%s]",
                     vkFollower.first_name, vkFollower.last_name, vkFollower.photo_200));
 
-            if(vkFollower.photo_200.length() > 50) {
-                Log.d(TAG, String.format("vkFollower.photo_200.length() > 50 for %s %s ", vkFollower.first_name, vkFollower.last_name));
-                nivAvatar.setImageUrl(vkFollower.photo_200, Application.getImageLoader());
-            }
-            else {
-                Log.d(TAG, String.format("vkFollower.photo_200.length() <= 50 for %s %s ", vkFollower.first_name, vkFollower.last_name));
+            if (vkFollower.photo_200.length() > 50) {
+//                Log.d(TAG, String.format("vkFollower.photo_200.length() > 50 for %s %s ", vkFollower.first_name, vkFollower.last_name));
+                vh.nivAvatar.setImageUrl(vkFollower.photo_200, Application.getImageLoader());
+            } else {
+//                Log.d(TAG, String.format("vkFollower.photo_200.length() <= 50 for %s %s ", vkFollower.first_name, vkFollower.last_name));
                 switch (vkFollower.sex) {
                     case VKApiUserFull.Sex.MALE:
-                        Log.d(TAG, String.format("vkFollower MALE for %s %s ", vkFollower.first_name, vkFollower.last_name));
-                        nivAvatar.setDefaultImageResId(R.drawable.icons8_adam_sandler_filled_100);
+//                        Log.d(TAG, String.format("vkFollower MALE for %s %s ", vkFollower.first_name, vkFollower.last_name));
+                        vh.nivAvatar.setDefaultImageResId(R.drawable.icons8_adam_sandler_filled_100);
                         break;
                     case VKApiUserFull.Sex.FEMALE:
-                        Log.d(TAG, String.format("vkFollower FEMALE for %s %s ", vkFollower.first_name, vkFollower.last_name));
-                        nivAvatar.setDefaultImageResId(R.drawable.icons8_kim_kardashian_filled_100);
+//                        Log.d(TAG, String.format("vkFollower FEMALE for %s %s ", vkFollower.first_name, vkFollower.last_name));
+                        vh.nivAvatar.setDefaultImageResId(R.drawable.icons8_kim_kardashian_filled_100);
                         break;
                     default:
-                        Log.d(TAG, String.format("vkFollower UNKNOWN for %s %s ", vkFollower.first_name, vkFollower.last_name));
-                        nivAvatar.setDefaultImageResId(R.drawable.ic_launcher_foreground);
+//                        Log.d(TAG, String.format("vkFollower UNKNOWN for %s %s ", vkFollower.first_name, vkFollower.last_name));
+                        vh.nivAvatar.setDefaultImageResId(R.drawable.ic_launcher_foreground);
                 }
-                nivAvatar.setImageUrl(null, Application.getImageLoader());
+                vh.nivAvatar.setImageUrl(null, Application.getImageLoader());
             }
 
-            tvUsername.setText(
+            vh.tvUsername.setText(
                     String.format("%s %s",
                             vkFollower.first_name,
                             vkFollower.last_name));
-            if(vkFollower.city != null)
-                tvCity.setText(vkFollower.city.title);
+            if (vkFollower.city != null)
+                vh.tvCity.setText(vkFollower.city.title);
 
 
         }
-
     }
 
     @Override
@@ -88,16 +82,26 @@ public class FollowersAdapter extends RecyclerView.Adapter {
         return vkFollowers.getCount();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    private int viewByIdCount = 0;
 
-        private final String TAG = String.format("%s/%s.%s", Application.APP_TAG, FollowersAdapter.class.getSimpleName(), ViewHolder.class.getSimpleName());
+    public class BetterViewHolder extends RecyclerView.ViewHolder {
 
-        CardView cvFollower;
+        private final String TAG = String.format("%s/%s.%s", Application.APP_TAG, FollowersAdapter.class.getSimpleName(), BetterViewHolder.class.getSimpleName());
+        final TextView         tvUsername;
+        final TextView         tvCity;
+        final TextView         tvPosition;
+        final NetworkImageView nivAvatar;
+        final CardView         cvFollower;
 
-        ViewHolder(CardView cardView) {
+        BetterViewHolder(CardView cardView) {
             super(cardView);
-            Log.d(TAG, "ViewHolder: ");
+            Log.d(TAG, String.format("BetterViewHolder: findViewById calls: %d", ++viewByIdCount));
             cvFollower = cardView;
+            tvUsername = cvFollower.findViewById(R.id.card_follower_user_name);
+            tvCity     = cvFollower.findViewById(R.id.card_follower_city);
+            tvPosition = cvFollower.findViewById(R.id.card_position);
+            nivAvatar  = cvFollower.findViewById(R.id.card_avatar);
+
         }
     }
 
