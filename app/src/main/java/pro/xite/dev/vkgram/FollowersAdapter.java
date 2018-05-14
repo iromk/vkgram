@@ -45,21 +45,16 @@ public class FollowersAdapter extends RecyclerView.Adapter {
                     vkFollower.first_name, vkFollower.last_name, vkFollower.photo_200));
 
             if (vkFollower.photo_200.length() > 50) {
-//                Log.d(TAG, String.format("vkFollower.photo_200.length() > 50 for %s %s ", vkFollower.first_name, vkFollower.last_name));
                 vh.nivAvatar.setImageUrl(vkFollower.photo_200, Application.getImageLoader());
             } else {
-//                Log.d(TAG, String.format("vkFollower.photo_200.length() <= 50 for %s %s ", vkFollower.first_name, vkFollower.last_name));
                 switch (vkFollower.sex) {
                     case VKApiUserFull.Sex.MALE:
-//                        Log.d(TAG, String.format("vkFollower MALE for %s %s ", vkFollower.first_name, vkFollower.last_name));
                         vh.nivAvatar.setDefaultImageResId(R.drawable.icons8_adam_sandler_filled_100);
                         break;
                     case VKApiUserFull.Sex.FEMALE:
-//                        Log.d(TAG, String.format("vkFollower FEMALE for %s %s ", vkFollower.first_name, vkFollower.last_name));
                         vh.nivAvatar.setDefaultImageResId(R.drawable.icons8_kim_kardashian_filled_100);
                         break;
                     default:
-//                        Log.d(TAG, String.format("vkFollower UNKNOWN for %s %s ", vkFollower.first_name, vkFollower.last_name));
                         vh.nivAvatar.setDefaultImageResId(R.drawable.ic_launcher_foreground);
                 }
                 vh.nivAvatar.setImageUrl(null, Application.getImageLoader());
@@ -78,7 +73,6 @@ public class FollowersAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-//        Log.d(TAG, "getItemCount: ");
         return vkFollowers.getCount();
     }
 
