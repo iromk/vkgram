@@ -1,5 +1,6 @@
 package pro.xite.dev.vkgram;
 
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,12 +18,17 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);
-        if(fm.getFragments().size() > 0) {
-            for(Fragment f: fm.getFragments()) {
-                tabItems.add(Pair.create("XYZ", f));
-                Log.d(TAG, String.format("ViewPagerAdapter: %s", f.toString()));
-            }
-        }
+//        if(fm.getFragments().size() > 0) {
+//            for(Fragment f: fm.getFragments()) {
+//                tabItems.add(Pair.create("XYZ", f));
+//                Log.d(TAG, String.format("ViewPagerAdapter: %s", f.toString()));
+//            }
+//        }
+    }
+
+    @Override
+    public void restoreState(Parcelable state, ClassLoader loader) {
+        super.restoreState(state, loader);
     }
 
     public void addFragment(CharSequence title, Fragment fragment) {

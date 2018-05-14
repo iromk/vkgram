@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @KeepState("usr")
     private VKApiUserFull user;
 
+    @KeepState(ThemeSelectActivity.KEY_THEME_ID)
     @StyleRes
     private int theme = R.style.VkgramThemeGreengo;
 
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initUI();
         initSession();
 
+        showTags("onCreate");
         if(savedInstanceState != null) {
             Log.d(TAG, "savedInstanceState != null");
             theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
@@ -104,10 +106,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 final Fragment f = FollowersFragment.newInstance(user);
                 viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 //                viewPagerAdapter.addFragment("Paolo's followers", getSupportFragmentManager().getFragments().get(0));
-//                viewPagerAdapter.addFragment("Paolo's", f);
+                viewPagerAdapter.addFragment("Paolo's", f);
 //                viewPagerAdapter.notifyDataSetChanged();
                 viewPager.setAdapter(viewPagerAdapter);
                 tabLayout.setupWithViewPager(viewPager);
+                showTags("onRecreate");
             }
         } else {
             initTabs();
@@ -255,11 +258,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        StateKeeper.bundle(this, outState);
         Log.d(TAG, "onSaveInstanceState: ");
-        outState.putInt(ThemeSelectActivity.KEY_THEME_ID, theme);
-//        outState.putParcelable("usr", user);
+        showTags("onSaveInstanceState");
+        StateKeeper.bundle(this, outState);
         super.onSaveInstanceState(outState);
+    }
+
+    private void showTags(String s) {
+        Log.d(TAG, String.format("getTag() at %s", s));
+        for(int i=0; i < getSupportFragmentManager().getFragments().size(); i++)
+            Log.d(TAG, String.format("getSupportFragmentManager.getTag() == %s", getSupportFragmentManager().getFragments().get(i).getTag()));
+
+        if(viewPagerAdapter != null)
+        for(int i=0; i < viewPagerAdapter.getCount(); i++)
+            Log.d(TAG, String.format("viewPagerAdapter          getTag() == %s", viewPagerAdapter.getItem(i).getTag()));
+        else Log.d(TAG, "viewPagerAdapter          getTag() == null");
+
     }
 
     //TODO переписать в switch и методы
@@ -362,10 +376,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 requestUserName("1");
                 final Fragment f = FollowersFragment.newInstance(user);
                 viewPagerAdapter.addFragment("Paolo's followers", f);
+                showTags("onNavigationItemSelected before notify data changed");
                 viewPagerAdapter.notifyDataSetChanged();
                 tabLayout.getTabAt(0).setIcon(R.drawable.followers);
-
-
+                showTags("onNavigationItemSelected after notify");
                 return true;
             case R.id.logout:
                 return logoutVk();
