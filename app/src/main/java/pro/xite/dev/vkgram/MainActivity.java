@@ -113,10 +113,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 final Fragment f = FollowersFragment.newInstance(user);
                 viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 //                viewPagerAdapter.addFragment("Paolo's followers", getSupportFragmentManager().getFragments().get(0));
-                viewPagerAdapter.addFragment("Paolo's", f);
+                viewPagerAdapter.addFragment("", f);
 //                viewPagerAdapter.notifyDataSetChanged();
                 viewPager.setAdapter(viewPagerAdapter);
                 tabLayout.setupWithViewPager(viewPager);
+                tabLayout.getTabAt(0).setIcon(R.drawable.followers);
                 showTags("onRecreate");
             }
         } else {
@@ -377,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.load_followers:
                 requestUserName("1");
                 final Fragment f = FollowersFragment.newInstance(user);
-                viewPagerAdapter.addFragment("Paolo's followers", f);
+                viewPagerAdapter.addFragment("", f);
                 showTags("onNavigationItemSelected before notify data changed");
                 viewPagerAdapter.notifyDataSetChanged();
                 tabLayout.getTabAt(0).setIcon(R.drawable.followers);
