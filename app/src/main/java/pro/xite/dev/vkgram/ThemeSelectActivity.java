@@ -24,7 +24,7 @@ public class ThemeSelectActivity extends AppCompatActivity {
     private static final String TAG = ThemeSelectActivity.class.getSimpleName();
     private @StyleRes int newTheme = Integer.MIN_VALUE;
 
-    @BindView(R.id.toolbar_main) Toolbar toolbar;
+    @BindView(R.id.toolbar_light) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

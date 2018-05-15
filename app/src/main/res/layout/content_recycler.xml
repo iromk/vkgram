@@ -7,4 +7,3 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:showIn="@layout/drawer_content_coordinator" />
-    <!--android:background="?attr/colorPrimaryDark"-->
