@@ -46,9 +46,9 @@ public class ThemeSelectActivity extends AppCompatActivity {
 
     public void onButtonClick(View view) {
         if(view.getId() == R.id.btn_indigo)
-            newTheme = R.style.VkgramThemeIndigo;
+            newTheme = R.style.VkgramTheme_Indigo;
         if(view.getId() == R.id.btn_greengo)
-            newTheme = R.style.VkgramThemeGreengo;
+            newTheme = R.style.VkgramTheme_Greengo;
         recreate();
     }
 

@@ -56,15 +56,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
     private static final int INTENT_IMAGE_CAPTURE = 0x1441;
+    private static final String KEY_VK_CURRENT_USER= "vk.current_user";
 
     private boolean isResumed = false;
 
-    @KeepState("usr")
+    @KeepState(KEY_VK_CURRENT_USER) //TODO implement auto-key if name doesn't matter
     private VKApiUserFull user;
 
     @KeepState(ThemeSelectActivity.KEY_THEME_ID)
     @StyleRes
-    private int theme = R.style.VkgramThemeGreengo;
+    private int theme = R.style.VkgramTheme;
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
@@ -86,9 +87,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         final SharedPreferences prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
 
-        setContentView(R.layout.drawer_activity_main);
-        ButterKnife.bind(this);
+        @StyleRes int savedTheme = prefSettings.getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
+        if(savedTheme != ThemeSelectActivity.NONE)
+            theme = savedTheme;
 
+        StateKeeper.unbundle(this, savedInstanceState);
+
+        setTheme(theme);
+        setContentView(R.layout.drawer_activity_main);
+
+        ButterKnife.bind(this);
 
         Log.d(TAG, "onCreate:");
 
@@ -98,9 +106,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         showTags("onCreate");
         if(savedInstanceState != null) {
             Log.d(TAG, "savedInstanceState != null");
-            theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
+//            theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
             prefSettings.edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
-            StateKeeper.unbundle(this, savedInstanceState);
             if(user != null) {
                 setActiveUser();
                 final Fragment f = FollowersFragment.newInstance(user);
@@ -114,12 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         } else {
             initTabs();
-            @StyleRes int savedTheme = prefSettings.getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
-            if(savedTheme != ThemeSelectActivity.NONE)
-                theme = savedTheme;
         }
-        setTheme(theme);
-
     }
 
     private void initUI() {

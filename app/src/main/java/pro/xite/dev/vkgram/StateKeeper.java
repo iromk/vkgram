@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 
 import static java.util.Objects.requireNonNull;
 
@@ -29,6 +30,11 @@ public class StateKeeper {
                     if(Parcelable.class.isAssignableFrom(field.getType())) {
                         Log.i(TAG, "bundled as Parcelable object");
                         bundle.putParcelable(key, (Parcelable) objectItem);
+                        continue;
+                    }
+                    if(field.getGenericType() == int.class) {
+                        Log.i(TAG, "bundle as int value");
+                        bundle.putInt(key, field.getInt(object));
                     }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
@@ -38,6 +44,9 @@ public class StateKeeper {
     }
 
     public static void unbundle(Object object, Bundle bundle) {
+
+        if(bundle == null || object == null) return;
+
         Class<?> objectClass = requireNonNull(object).getClass();
 
         for (Field field: objectClass.getDeclaredFields()) {
