@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="VkgramTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="cardDirection">2</item>
+    </style>
+
+    <style name="VkgramTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="VkgramTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="VkgramTheme.Greengo">
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryDark">@color/color_primary_dark</item>
+        <item name="colorAccent">@color/color_accent</item>
+        <item name="cardDirection">0</item>
+        <!--<item name="android:textSize">36sp</item>-->
+    </style>
+
+
+    <style name="VkgramTheme.Indigo">
+        <item name="colorPrimary">@color/indigo</item>
+        <item name="colorPrimaryDark">@color/indigo_dark</item>
+        <item name="colorAccent">@color/pink_accent</item>
+        <item name="cardDirection">1</item>
+
+    </style>
+
+</resources>
