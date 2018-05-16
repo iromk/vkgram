@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initUI();
         initSession();
 
-        showTags("onCreate");
+        debugShowTags("onCreate");
         if(savedInstanceState != null) {
             Log.d(TAG, "savedInstanceState != null");
 //            theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 viewPager.setAdapter(viewPagerAdapter);
                 tabLayout.setupWithViewPager(viewPager);
                 tabLayout.getTabAt(0).setIcon(R.drawable.followers);
-                showTags("onRecreate");
+                debugShowTags("onRecreate");
             }
         } else {
             initTabs();
@@ -248,11 +248,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        final int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, ThemeSelectActivity.class);
-            startActivityForResult(intent, 0);
+            final Intent intent = new Intent(this, ThemeSelectActivity.class);
+            startActivityForResult(intent, ThemeSelectActivity.REQUEST_CODE);
             return true;
         }
 
@@ -262,12 +262,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.d(TAG, "onSaveInstanceState: ");
-        showTags("onSaveInstanceState");
+        debugShowTags("onSaveInstanceState");
         StateKeeper.bundle(this, outState);
         super.onSaveInstanceState(outState);
     }
 
-    private void showTags(String s) {
+    private void debugShowTags(String s) {
         Log.d(TAG, String.format("getTag() at %s", s));
         for(int i=0; i < getSupportFragmentManager().getFragments().size(); i++)
             Log.d(TAG, String.format("getSupportFragmentManager.getTag() == %s", getSupportFragmentManager().getFragments().get(i).getTag()));
@@ -379,10 +379,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 requestUserName("1");
                 final Fragment f = FollowersFragment.newInstance(user);
                 viewPagerAdapter.addFragment("", f);
-                showTags("onNavigationItemSelected before notify data changed");
+                debugShowTags("onNavigationItemSelected before notify data changed");
                 viewPagerAdapter.notifyDataSetChanged();
                 tabLayout.getTabAt(0).setIcon(R.drawable.followers);
-                showTags("onNavigationItemSelected after notify");
+                debugShowTags("onNavigationItemSelected after notify");
                 return true;
             case R.id.logout:
                 return logoutVk();
