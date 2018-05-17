@@ -1,7 +1,7 @@
 package pro.xite.dev.vkgram;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,21 +32,12 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKServiceActivity;
-import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.model.VKApiUserFull;
-import com.vk.sdk.api.model.VKPhotoArray;
-import com.vk.sdk.api.model.VKUsersArray;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,9 +50,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String KEY_VK_CURRENT_USER= "vk.current_user";
 
     private boolean isResumed = false;
-
-    @KeepState(KEY_VK_CURRENT_USER) //TODO implement auto-key if name doesn't matter
-    private VKApiUserFull user;
 
     @KeepState(ThemeSelectActivity.KEY_THEME_ID)
     @StyleRes
@@ -81,11 +69,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private File newPictureFile;
     private ViewPagerAdapter viewPagerAdapter;
 
+    private VkViewModel vkModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate:");
 
         super.onCreate(savedInstanceState);
+        vkModel = ViewModelProviders.of(this).get(VkViewModel.class);
 
         loadPreferences();
         StateKeeper.unbundle(savedInstanceState, this);
@@ -103,18 +94,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if(savedInstanceState != null) {
             Application.settings().edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
-            if(user != null) {
-                setActiveUser();
-                final Fragment f = FollowersFragment.newInstance(user);
-                viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+            setActiveUser();
+            final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser());
+            viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 //                viewPagerAdapter.addFragment("Paolo's followers", getSupportFragmentManager().getFragments().get(0));
-                viewPagerAdapter.addFragment("", f);
+            viewPagerAdapter.addFragment("", f);
 //                viewPagerAdapter.notifyDataSetChanged();
-                viewPager.setAdapter(viewPagerAdapter);
-                tabLayout.setupWithViewPager(viewPager);
-                tabLayout.getTabAt(0).setIcon(R.drawable.followers);
-                debugShowTags("onRecreate");
-            }
+            viewPager.setAdapter(viewPagerAdapter);
+            tabLayout.setupWithViewPager(viewPager);
+            tabLayout.getTabAt(0).setIcon(R.drawable.followers);
+            debugShowTags("onRecreate");
         } else {
             initTabs();
         }
@@ -208,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         isResumed = true;
         if (VKSdk.isLoggedIn()) {
             Log.d(TAG, "onResume: logged in");
-            if(user == null) requestUserName();
+            if(vkModel.getLoggedInUser() == null) vkModel.getLoggedInUser();
         } else {
             Log.d(TAG, "onResume: not logged in");
             tryLogin();
@@ -341,35 +330,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 storageDir
             );
     }
-    private void requestUserName() {
-        requestUserName(VKAccessToken.currentToken().userId);
-    }
-
-    private void requestUserName(String uid) {
-        VKRequest request = new VKRequest("users.get",
-        VKParameters.from(
-                VKApiConst.USER_ID, uid,
-                VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo_200"),
-        VKUsersArray.class);
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public void onComplete(VKResponse response) {
-                try {
-                    VKUsersArray users = (VKUsersArray) (response.parsedModel);
-                    user = users.get(0);
-                    setActiveUser();
-                } catch (ClassCastException e) {
-                    Log.e(TAG, String.format(Locale.US, "onComplete: %s", e));
-                }
-            }
-        });
-    }
 
     private void setActiveUser() {
-        tvVkUserName.setText(String.format("%s %s", user.first_name, user.last_name));
-        tvActiveUserName.setText(String.format("%s %s", user.first_name, user.last_name));
-        nivActiveUserAvatar.setImageUrl(user.photo_200, Application.getImageLoader());
+        tvVkUserName.setText(String.format("%s %s", vkModel.getLoggedInUser().first_name, vkModel.getLoggedInUser().last_name));
+        tvActiveUserName.setText(String.format("%s %s", vkModel.getLoggedInUser().first_name, vkModel.getLoggedInUser().last_name));
+        nivActiveUserAvatar.setImageUrl(vkModel.getLoggedInUser().photo_200, Application.getImageLoader());
     }
 
     @Override
@@ -380,10 +345,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         "My pics",
                         LocalPicturesAlbumFragment.newInstance());
                 viewPagerAdapter.notifyDataSetChanged();
-                return loadAlbums();
+                return true; //loadAlbums();
             case R.id.load_followers:
-                requestUserName("1");
-                final Fragment f = FollowersFragment.newInstance(user);
+                final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser());
                 viewPagerAdapter.addFragment("", f);
                 debugShowTags("onNavigationItemSelected before notify data changed");
                 viewPagerAdapter.notifyDataSetChanged();
@@ -402,9 +366,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void onLoginStateChanged() {
         if (VKSdk.isLoggedIn()) {
-            requestUserName();
+            vkModel.getLoggedInUser();
         } else {
-            user = null;
+            vkModel.clearLoggedInUser();
         }
         updateUI();
     }
@@ -415,10 +379,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+/*
     private boolean loadAlbums() {
-        if (user != null) {
+        if (vkModel.getLoggedInUser() != null) {
             VKRequest request;
-            request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, user.id, "need_system", "1"));//, VKApiPhotoAlbum.class);
+            request = new VKRequest("photos.getAlbums", VKParameters.from(VKApiConst.OWNER_ID, vkModel.getLoggedInUser().id, "need_system", "1"));//, VKApiPhotoAlbum.class);
             request.getPreparedParameters().remove("access_token");
             try {
                 Log.i(TAG, String.format("loadAlbums:\n%s", request.getPreparedRequest().getQuery().toString()));
@@ -442,6 +407,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
+*/
 
 }
 
