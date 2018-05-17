@@ -2,6 +2,7 @@ package pro.xite.dev.vkgram;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -47,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
     private static final int INTENT_IMAGE_CAPTURE = 0x1441;
-    private static final String KEY_VK_CURRENT_USER= "vk.current_user";
 
     private boolean isResumed = false;
 
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         vkModel = ViewModelProviders.of(this).get(VkViewModel.class);
 
+        setDefaults();
         loadPreferences();
         StateKeeper.unbundle(savedInstanceState, this);
 
@@ -112,6 +113,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onRestart() {
         super.onRestart();
+    }
+
+    private void setDefaults() {
+        theme = R.style.VkgramTheme_Greengo;
     }
 
     private void loadPreferences() {
