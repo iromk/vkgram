@@ -43,11 +43,11 @@ public class StateKeeper {
         }
     }
 
-    public static void unbundle(Object object, Bundle bundle) {
+    public static void unbundle(Bundle what, Object target) {
 
-        if(bundle == null || object == null) return;
+        if(what == null || target == null) return;
 
-        Class<?> objectClass = requireNonNull(object).getClass();
+        Class<?> objectClass = requireNonNull(target).getClass();
 
         for (Field field: objectClass.getDeclaredFields()) {
             field.setAccessible(true);
@@ -57,10 +57,10 @@ public class StateKeeper {
                         key,
                         field.getType().getSimpleName(),
                         field.getName()));
-                Object objectItem = bundle.get(key);
+                Object objectItem = what.get(key);
                 if(objectItem != null) {
                     try {
-                        field.set(object, objectItem);
+                        field.set(target, objectItem);
                         Log.i(TAG, String.format("unbundled: %s", objectItem.getClass()));
                     } catch (IllegalAccessException e) {
                         Log.e(TAG, "unbundle error:+ e.printStackTrace()");
@@ -68,7 +68,7 @@ public class StateKeeper {
                 }
             }
         }
-        for(String key : bundle.keySet()) {
+        for(String key : what.keySet()) {
             Log.d(TAG, String.format("unbundle: key [%s]", key));
 
         }

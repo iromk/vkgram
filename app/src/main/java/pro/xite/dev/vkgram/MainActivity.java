@@ -83,31 +83,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate:");
+
         super.onCreate(savedInstanceState);
 
-        final SharedPreferences prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
-
-        @StyleRes int savedTheme = prefSettings.getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
-        if(savedTheme != ThemeSelectActivity.NONE)
-            theme = savedTheme;
-
-        StateKeeper.unbundle(this, savedInstanceState);
+        loadPreferences();
+        StateKeeper.unbundle(savedInstanceState, this);
 
         setTheme(theme);
+
         setContentView(R.layout.drawer_activity_main);
 
         ButterKnife.bind(this);
-
-        Log.d(TAG, "onCreate:");
 
         initUI();
         initSession();
 
         debugShowTags("onCreate");
+
         if(savedInstanceState != null) {
-            Log.d(TAG, "savedInstanceState != null");
-//            theme = savedInstanceState.getInt(ThemeSelectActivity.KEY_THEME_ID, R.style.VkgramThemeGreengo);
-            prefSettings.edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
+            Application.settings().edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
             if(user != null) {
                 setActiveUser();
                 final Fragment f = FollowersFragment.newInstance(user);
@@ -123,6 +118,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             initTabs();
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    private void loadPreferences() {
+        @StyleRes int savedTheme = Application.settings().getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
+        if(savedTheme != ThemeSelectActivity.NONE)
+            theme = savedTheme;
     }
 
     private void initUI() {
