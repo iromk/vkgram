@@ -40,11 +40,10 @@ public class VkViewModel extends AndroidViewModel {
 
     @Nullable
     public VKApiUserFull getLoggedInUser() {
+        if (VKAccessToken.currentToken() == null) return null;
         if (vkLoggedInUser == null) {
             vkLoggedInUser = new MutableLiveData<>();
-            if(VKAccessToken.currentToken() != null)
-                loadVkUser(VKAccessToken.currentToken().userId);
-            else return null;
+            loadVkUser(VKAccessToken.currentToken().userId);
         }
         return vkLoggedInUser.getValue();
     }

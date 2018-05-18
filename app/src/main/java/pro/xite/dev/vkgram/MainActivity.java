@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
     private static final int INTENT_IMAGE_CAPTURE = 0x1441;
+    public static final int VK_AUTH_SERVICE_TYPE = 10485;
 
     private boolean isResumed = false;
 
@@ -271,61 +272,75 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void debugShowTags(String s) {
-        Log.d(TAG, String.format("getTag() at %s", s));
+        Log.v(TAG, String.format("getTag() at %s", s));
         for(int i=0; i < getSupportFragmentManager().getFragments().size(); i++)
-            Log.d(TAG, String.format("getSupportFragmentManager.getTag() == %s", getSupportFragmentManager().getFragments().get(i).getTag()));
+            Log.v(TAG, String.format("getSupportFragmentManager.getTag() == %s", getSupportFragmentManager().getFragments().get(i).getTag()));
 
         if(viewPagerAdapter != null)
         for(int i=0; i < viewPagerAdapter.getCount(); i++)
-            Log.d(TAG, String.format("viewPagerAdapter          getTag() == %s", viewPagerAdapter.getItem(i).getTag()));
-        else Log.d(TAG, "viewPagerAdapter          getTag() == null");
+            Log.v(TAG, String.format("viewPagerAdapter          getTag() == %s", viewPagerAdapter.getItem(i).getTag()));
+        else Log.v(TAG, "viewPagerAdapter          getTag() == null");
 
     }
 
-    //TODO переписать в switch и методы
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.w(TAG, String.format("onActivityResult: requestCode == %d, resultCode == %d", requestCode, resultCode));
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == ThemeSelectActivity.RESULT_THEME_CHANGED && data != null) {
+
+        switch (requestCode) {
+            case ThemeSelectActivity.REQUEST_CODE:
+                resultSwitchTheme(resultCode, data);
+                break;
+            case INTENT_IMAGE_CAPTURE:
+                resultCaptureImage(resultCode);
+                break;
+            case VK_AUTH_SERVICE_TYPE:
+                resultVkAuthorization(requestCode, resultCode, data);
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void resultSwitchTheme(int resultCode, Intent data) {
+        if (resultCode == ThemeSelectActivity.RESULT_THEME_CHANGED && data != null) {
             final @StyleRes int theme = data.getIntExtra(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
             if (theme != ThemeSelectActivity.NONE) {
                 this.theme = theme;
                 recreate();
             }
-            return;
         }
-        if(requestCode == INTENT_IMAGE_CAPTURE) {
-            if(resultCode == RESULT_OK) {
-                Log.d(TAG, "onActivityResult: OK, INTENT_IMAGE_CAPTURE'd");
-                Snackbar.make(coordinatorLayout, "Picture saved. See local album.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-            else {
-                Log.d(TAG, "onActivityResult: FAIL, INTENT_IMAGE_CAPTURE'd");
-                Snackbar.make(coordinatorLayout, "Capture canceled.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                if(!newPictureFile.delete())
-                    throw new AssertionError("Problem deleting canceled newPictureFile");
-            }
-            newPictureFile = null;
-        }
-        if(requestCode == VKServiceActivity.VKServiceType.Authorization.getOuterCode()) {
-            VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
-                @Override
-                public void onResult(VKAccessToken res) {
-                    Log.d(TAG, String.format("onResult: User passed Authorization\ntoken [%s]",res.accessToken));
-                    onLoginStateChanged();
-                }
+    }
 
-                @Override
-                public void onError(VKError error) {
-                    Log.d(TAG, "onResult: User didn't pass Authorization");
-                }
-            };
-            if(VKSdk.onActivityResult(requestCode, resultCode, data, callback)) return;
+    private void resultCaptureImage(int resultCode) {
+        if (resultCode == RESULT_OK) {
+            Log.d(TAG, "onActivityResult: OK, INTENT_IMAGE_CAPTURE'd");
+            Snackbar.make(coordinatorLayout, "Picture saved. See local album.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        } else {
+            Log.d(TAG, "onActivityResult: FAIL, INTENT_IMAGE_CAPTURE'd");
+            Snackbar.make(coordinatorLayout, "Capture canceled.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+            if (!newPictureFile.delete())
+                throw new AssertionError("Problem deleting canceled newPictureFile");
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        newPictureFile = null;
+    }
+
+    private void resultVkAuthorization(int requestCode, int resultCode, Intent data) {
+        VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
+            @Override
+            public void onResult(VKAccessToken res) {
+                Log.d(TAG, String.format("onResult: User passed Authorization\ntoken [%s]",res.accessToken));
+                onLoginStateChanged();
+            }
+
+            @Override
+            public void onError(VKError error) {
+                Log.d(TAG, "onResult: User didn't pass Authorization");
+            }
+        };
+        VKSdk.onActivityResult(requestCode, resultCode, data, callback);
     }
 
     private File createImageFile() throws IOException {

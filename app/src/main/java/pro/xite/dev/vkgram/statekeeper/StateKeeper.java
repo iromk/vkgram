@@ -65,7 +65,7 @@ public class StateKeeper {
         for (Field field: objectClass.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(KeepState.class)) {
-                final String key = field.getAnnotation(KeepState.class).value();
+                final String key = getKey(field);
                 Log.i(TAG, String.format("recovering field: @(%s) %s %s",
                         key,
                         field.getType().getSimpleName(),
