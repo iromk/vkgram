@@ -19,7 +19,8 @@ public class StateKeeper {
         for (Field field: objectClass.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(KeepState.class)) {
-                final String key = field.getAnnotation(KeepState.class).value();
+                final String key = getKey(field);
+
                 Log.i(TAG, String.format("saving field: @(%s) %s %s",
                         key,
                         field.getType().getSimpleName(),
@@ -46,6 +47,13 @@ public class StateKeeper {
                 }
             }
         }
+    }
+
+    private static String getKey(Field field) {
+        String key = field.getAnnotation(KeepState.class).value();
+        if(key.equals(KeepState.DUMMY_KEY))
+            key = String.format("%s_%s",field.getType(), field.getName());
+        return key;
     }
 
     public static void unbundle(Bundle what, Object target) {

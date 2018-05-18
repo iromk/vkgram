@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @StyleRes
     private int theme;
 
-    @KeepState("dummy_key")
+    @KeepState
     private boolean followersTab;
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;

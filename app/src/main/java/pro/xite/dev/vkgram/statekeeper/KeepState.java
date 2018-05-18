@@ -8,5 +8,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Retention(RUNTIME) @Target(FIELD)
 public @interface KeepState {
-    String value();
+    String DUMMY_KEY = "DUMMY_KEY";
+    String value() default DUMMY_KEY;
 }
