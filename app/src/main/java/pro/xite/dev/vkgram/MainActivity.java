@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -33,6 +34,7 @@ import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKServiceActivity;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.model.VKApiUserFull;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,36 +88,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         StateKeeper.unbundle(savedInstanceState, this);
 
         setTheme(theme);
-
         setContentView(R.layout.drawer_activity_main);
 
         ButterKnife.bind(this);
-
         initUI();
         initSession();
+        updateUI(VKSdk.isLoggedIn());
+        initTabs();
 
         debugShowTags("onCreate");
 
+        setActiveUser(vkModel.getLoggedInUser());
+
         if(savedInstanceState != null) {
             Application.settings().edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
-            setActiveUser();
-            final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser());
-            viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-//                viewPagerAdapter.addFragment("Paolo's followers", getSupportFragmentManager().getFragments().get(0));
-            viewPagerAdapter.addFragment("", f);
-//                viewPagerAdapter.notifyDataSetChanged();
-            viewPager.setAdapter(viewPagerAdapter);
-            tabLayout.setupWithViewPager(viewPager);
-            tabLayout.getTabAt(0).setIcon(R.drawable.followers);
+
+            makeFollowersTab();
+
             debugShowTags("onRecreate");
-        } else {
-            initTabs();
         }
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
+    private void makeFollowersTab() {
+        final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser());
+        viewPagerAdapter.addFragment("", f);
+        viewPagerAdapter.notifyDataSetChanged();
+        tabLayout.getTabAt(0).setIcon(R.drawable.followers); // FIXME possible npe/bug point
     }
 
     private void setDefaults() {
@@ -130,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void initUI() {
         tvVkUserName = navigationView.getHeaderView(0).findViewById(R.id.vk_user_full_name);
-
-        updateUI();
 
         setSupportActionBar(toolbar);
         collapsingToolbarLayout.setTitle(getString(R.string.app_name));
@@ -159,8 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        tabLayout.addTab(tab);
     }
 
-    private void updateUI() {
-        final boolean isLoggedIn = VKSdk.isLoggedIn();
+    private void updateUI(final boolean isLoggedIn) {
         navigationView.getMenu().setGroupVisible(R.id.logged_in, isLoggedIn);
         navigationView.getMenu().setGroupVisible(R.id.logged_out, !isLoggedIn);
     }
@@ -339,10 +334,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             );
     }
 
-    private void setActiveUser() {
-        tvVkUserName.setText(String.format("%s %s", vkModel.getLoggedInUser().first_name, vkModel.getLoggedInUser().last_name));
-        tvActiveUserName.setText(String.format("%s %s", vkModel.getLoggedInUser().first_name, vkModel.getLoggedInUser().last_name));
-        nivActiveUserAvatar.setImageUrl(vkModel.getLoggedInUser().photo_200, Application.getImageLoader());
+    private void setActiveUser(final @Nullable VKApiUserFull u) {
+        if(u != null) {
+            tvVkUserName.setText(String.format("%s %s", u.first_name, u.last_name));
+            tvActiveUserName.setText(String.format("%s %s", u.first_name, u.last_name));
+            nivActiveUserAvatar.setImageUrl(u.photo_200, Application.getImageLoader());
+        }
     }
 
     @Override
@@ -375,10 +372,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void onLoginStateChanged() {
         if (VKSdk.isLoggedIn()) {
             vkModel.getLoggedInUser();
+            updateUI(true);
         } else {
             vkModel.clearLoggedInUser();
+            updateUI(false);
         }
-        updateUI();
     }
 
     private boolean logoutVk() {
