@@ -58,7 +58,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @KeepState(ThemeSelectActivity.KEY_THEME_ID)
     @StyleRes
-    private int theme = R.style.VkgramTheme;
+    private int theme;
+
+    @KeepState("dummy_key")
+    private boolean followersTab;
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;
     @BindView(R.id.drawer_main_layout) DrawerLayout drawerMainLayout;
@@ -91,19 +94,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.drawer_activity_main);
 
         ButterKnife.bind(this);
-        initUI();
+        initUi();
         initSession();
-        updateUI(VKSdk.isLoggedIn());
+        updateUi(VKSdk.isLoggedIn());
         initTabs();
 
         debugShowTags("onCreate");
 
-        setActiveUser(vkModel.getLoggedInUser());
+        setActiveUser(vkModel.getLoggedInUser()); // TODO callback or something when loading for the first time
 
         if(savedInstanceState != null) {
             Application.settings().edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
 
-            makeFollowersTab();
+            if(followersTab) makeFollowersTab();
 
             debugShowTags("onRecreate");
         }
@@ -114,10 +117,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPagerAdapter.addFragment("", f);
         viewPagerAdapter.notifyDataSetChanged();
         tabLayout.getTabAt(0).setIcon(R.drawable.followers); // FIXME possible npe/bug point
+        followersTab = true;
     }
 
     private void setDefaults() {
         theme = R.style.VkgramTheme_Greengo;
+        followersTab = false;
     }
 
     private void loadPreferences() {
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             theme = savedTheme;
     }
 
-    private void initUI() {
+    private void initUi() {
         tvVkUserName = navigationView.getHeaderView(0).findViewById(R.id.vk_user_full_name);
 
         setSupportActionBar(toolbar);
@@ -155,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        tabLayout.addTab(tab);
     }
 
-    private void updateUI(final boolean isLoggedIn) {
+    private void updateUi(final boolean isLoggedIn) {
         navigationView.getMenu().setGroupVisible(R.id.logged_in, isLoggedIn);
         navigationView.getMenu().setGroupVisible(R.id.logged_out, !isLoggedIn);
     }
@@ -352,12 +357,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 viewPagerAdapter.notifyDataSetChanged();
                 return true; //loadAlbums();
             case R.id.load_followers:
-                final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser());
-                viewPagerAdapter.addFragment("", f);
-                debugShowTags("onNavigationItemSelected before notify data changed");
-                viewPagerAdapter.notifyDataSetChanged();
-                tabLayout.getTabAt(0).setIcon(R.drawable.followers);
-                debugShowTags("onNavigationItemSelected after notify");
+                makeFollowersTab();
                 return true;
             case R.id.logout:
                 return logoutVk();
@@ -372,10 +372,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void onLoginStateChanged() {
         if (VKSdk.isLoggedIn()) {
             vkModel.getLoggedInUser();
-            updateUI(true);
+            updateUi(true);
         } else {
             vkModel.clearLoggedInUser();
-            updateUI(false);
+            updateUi(false);
         }
     }
 

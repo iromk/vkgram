@@ -37,6 +37,10 @@ public class StateKeeper {
                         Log.i(TAG, "bundle as int value");
                         bundle.putInt(key, field.getInt(object));
                     }
+                    if(field.getGenericType() == boolean.class) {
+                        Log.i(TAG, "bundle as boolean value");
+                        bundle.putBoolean(key, field.getBoolean(object));
+                    }
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
