@@ -2,7 +2,6 @@ package pro.xite.dev.vkgram;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,6 +42,10 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pro.xite.dev.vkgram.followers.FollowersFragment;
+import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
+import pro.xite.dev.vkgram.statekeeper.KeepState;
+import pro.xite.dev.vkgram.statekeeper.StateKeeper;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
