@@ -1,6 +1,9 @@
 package pro.xite.dev.vkgram;
 
+import android.arch.core.util.Function;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.AsyncQueryHandler;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         debugShowTags("onCreate");
 
-        setActiveUser(vkModel.getLoggedInUser()); // TODO callback or something when loading for the first time
+        setActiveUser(); 
 
         if(savedInstanceState != null) {
             Application.settings().edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void makeFollowersTab() {
-        final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser());
+        final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser().getValue());
         viewPagerAdapter.addFragment("", f);
         viewPagerAdapter.notifyDataSetChanged();
         tabLayout.getTabAt(0).setIcon(R.drawable.followers); // FIXME possible npe/bug point
@@ -354,12 +357,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             );
     }
 
-    private void setActiveUser(final @Nullable VKApiUserFull u) {
-        if(u != null) {
-            tvVkUserName.setText(String.format("%s %s", u.first_name, u.last_name));
-            tvActiveUserName.setText(String.format("%s %s", u.first_name, u.last_name));
-            nivActiveUserAvatar.setImageUrl(u.photo_200, Application.getImageLoader());
-        }
+    private void setActiveUser() {
+        final Observer<VKApiUserFull> activeUserObserver = u -> {
+            if(u != null) {
+                tvVkUserName.setText(String.format("%s %s", u.first_name, u.last_name));
+                tvActiveUserName.setText(String.format("%s %s", u.first_name, u.last_name));
+                nivActiveUserAvatar.setImageUrl(u.photo_200, Application.getImageLoader());
+            }
+        };
+        vkModel.getLoggedInUser().observe(this, activeUserObserver);
     }
 
     @Override

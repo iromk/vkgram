@@ -38,14 +38,14 @@ public class VkViewModel extends AndroidViewModel {
         return vkFollowers;
     }
 
-    @Nullable
-    public VKApiUserFull getLoggedInUser() {
-        if (VKAccessToken.currentToken() == null) return null;
+    @NonNull
+    public LiveData<VKApiUserFull> getLoggedInUser() {
         if (vkLoggedInUser == null) {
             vkLoggedInUser = new MutableLiveData<>();
-            loadVkUser(VKAccessToken.currentToken().userId);
+            if (VKAccessToken.currentToken() != null)
+                loadVkUser(VKAccessToken.currentToken().userId);
         }
-        return vkLoggedInUser.getValue();
+        return vkLoggedInUser;
     }
 
     private void loadVkUser(String userId) {
