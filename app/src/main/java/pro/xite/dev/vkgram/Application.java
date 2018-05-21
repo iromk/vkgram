@@ -3,6 +3,7 @@ package pro.xite.dev.vkgram;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 import android.util.Log;
@@ -37,6 +38,7 @@ public class Application extends android.app.Application {
             }
         }
     };
+    private static SharedPreferences prefSettings;
 
     @Override
     public void onCreate() {
@@ -47,6 +49,12 @@ public class Application extends android.app.Application {
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
         initImageLoader(this);
+
+        prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
+    }
+
+    public static SharedPreferences settings() {
+        return prefSettings;
     }
 
     private void getCertFingerprint() {

@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram;
+package pro.xite.dev.vkgram.followers;
 
 
 import android.arch.lifecycle.ViewModelProviders;
@@ -17,6 +17,9 @@ import com.vk.sdk.api.model.VKApiUserFull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.R;
+import pro.xite.dev.vkgram.VkViewModel;
 
 public class FollowersFragment extends Fragment {
 

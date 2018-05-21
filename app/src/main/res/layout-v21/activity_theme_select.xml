@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ThemeSelectActivity">
 
-    <include layout="@layout/toolbar_main" />
+    <include layout="@layout/toolbar_light" />
 
     <Button
         android:id="@+id/btn_indigo"

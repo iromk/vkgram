@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/VkgramThemeGreengo">
+        android:theme="@style/VkgramTheme.Indigo">
         <activity android:name="com.vk.sdk.VKServiceActivity"
                   android:label="ServiceActivity"
                   android:theme="@style/VK.Transparent" />

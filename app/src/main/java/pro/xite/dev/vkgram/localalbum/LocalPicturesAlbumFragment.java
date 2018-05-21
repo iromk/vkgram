@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram;
+package pro.xite.dev.vkgram.localalbum;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.R;
 
 public class LocalPicturesAlbumFragment extends Fragment {
 

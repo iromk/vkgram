@@ -22,9 +22,10 @@ public class ThemeSelectActivity extends AppCompatActivity {
     public static final String KEY_THEME_ID = "ThemeSelectActivity.ThemeId";
 
     private static final String TAG = ThemeSelectActivity.class.getSimpleName();
+    public static final int REQUEST_CODE = 48841;
     private @StyleRes int newTheme = Integer.MIN_VALUE;
 
-    @BindView(R.id.toolbar_main) Toolbar toolbar;
+    @BindView(R.id.toolbar_light) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +47,9 @@ public class ThemeSelectActivity extends AppCompatActivity {
 
     public void onButtonClick(View view) {
         if(view.getId() == R.id.btn_indigo)
-            newTheme = R.style.VkgramThemeIndigo;
+            newTheme = R.style.VkgramTheme_Indigo;
         if(view.getId() == R.id.btn_greengo)
-            newTheme = R.style.VkgramThemeGreengo;
+            newTheme = R.style.VkgramTheme_Greengo;
         recreate();
     }
 
