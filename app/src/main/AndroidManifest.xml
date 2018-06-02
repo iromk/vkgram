@@ -20,7 +20,7 @@
                   android:label="ServiceActivity"
                   android:theme="@style/VK.Transparent" />
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,12 +28,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ThemeSelectActivity"
+            android:name=".view.ThemeSelectActivity"
             android:label="@string/theme_select_title">
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".view.MainActivity" />
         </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"

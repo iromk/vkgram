@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram;
+package pro.xite.dev.vkgram.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +12,7 @@ import android.view.View;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pro.xite.dev.vkgram.R;
 
 public class ThemeSelectActivity extends AppCompatActivity {
 

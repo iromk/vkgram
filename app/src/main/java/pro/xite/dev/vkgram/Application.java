@@ -19,6 +19,8 @@ import com.vk.sdk.util.VKUtil;
 
 import java.util.Arrays;
 
+import pro.xite.dev.vkgram.view.MainActivity;
+
 public class Application extends android.app.Application {
 
     public static final String APP_TAG = "VKG";

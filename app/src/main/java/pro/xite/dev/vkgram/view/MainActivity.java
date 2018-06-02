@@ -1,16 +1,13 @@
-package pro.xite.dev.vkgram;
+package pro.xite.dev.vkgram.view;
 
-import android.arch.core.util.Function;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.AsyncQueryHandler;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StyleRes;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -35,7 +32,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.VKServiceActivity;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.model.VKApiUserFull;
 
@@ -47,6 +43,9 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.R;
+import pro.xite.dev.vkgram.VkViewModel;
 import pro.xite.dev.vkgram.followers.FollowersFragment;
 import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
 import pro.xite.dev.vkgram.statekeeper.KeepState;
