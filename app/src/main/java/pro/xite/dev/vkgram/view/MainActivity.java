@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         isResumed = true;
         if (VKSdk.isLoggedIn()) {
             Log.d(TAG, "onResume: logged in");
-            if(vkModel.getLoggedInUser() == null) vkModel.getLoggedInUser();
+            vkModel.getLoggedInUser();
         } else {
             Log.d(TAG, "onResume: not logged in");
             tryLogin();

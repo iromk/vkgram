@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -20,11 +19,11 @@ import com.vk.sdk.util.VKUtil;
 import java.util.Arrays;
 
 import pro.xite.dev.vkgram.view.MainActivity;
+import timber.log.Timber;
 
 public class Application extends android.app.Application {
 
     public static final String APP_TAG = "VKG";
-    private static final String TAG = String.format("%s/%s", Application.APP_TAG,  Application.class.getSimpleName());
 
     private RequestQueue requestQueue;
     private static ImageLoader imageLoader;
@@ -46,7 +45,8 @@ public class Application extends android.app.Application {
     public void onCreate() {
         super.onCreate();
 
-        Log.d(TAG, "Application onCreate: ");
+        if(BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
+        Timber.d("Application onCreate: ");
         getCertFingerprint();
         vkAccessTokenTracker.startTracking();
         VKSdk.initialize(this);
@@ -62,7 +62,7 @@ public class Application extends android.app.Application {
     private void getCertFingerprint() {
         String[] fingerprints = VKUtil.getCertificateFingerprint(this, this.getPackageName());
 
-        Log.d(TAG, String.format("getCertFingerprint: \n%s", Arrays.toString(fingerprints)));
+        Timber.d("getCertFingerprint: \n%s", Arrays.toString(fingerprints));
 
     }
 
@@ -73,7 +73,7 @@ public class Application extends android.app.Application {
     private void initImageLoader(Context context) {
         requestQueue = Volley.newRequestQueue(context.getApplicationContext());
         imageLoader = new ImageLoader(requestQueue, new ImageLoader.ImageCache() {
-            private final LruCache<String, Bitmap> mCache = new LruCache<String, Bitmap>(10);
+            private final LruCache<String, Bitmap> mCache = new LruCache<>(10);
             public void putBitmap(String url, Bitmap bitmap) {
                 mCache.put(url, bitmap);
             }
@@ -85,4 +85,3 @@ public class Application extends android.app.Application {
 
 
 }
-
