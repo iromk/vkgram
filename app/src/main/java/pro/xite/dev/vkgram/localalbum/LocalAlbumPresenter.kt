@@ -8,7 +8,10 @@ import timber.log.Timber
  * Created by Roman Syrchin on 6/3/18.
  */
 @InjectViewState
-class LocalAlbumPresenter : MvpPresenter<AlbumView>() {
+class LocalAlbumPresenter(private val m: LocalAlbumModel) : MvpPresenter<AlbumView>() {
+
+    val count: Int
+        get() = m.count
 
     override fun onFirstViewAttach() {
         Timber.v("onFirstViewAttach")
@@ -16,5 +19,10 @@ class LocalAlbumPresenter : MvpPresenter<AlbumView>() {
 
         viewState.initRecyclerView()
     }
+
+    fun showCard(itemView: AlbumItem, position: Int) {
+        itemView.setImage(m.getPicture(position))
+    }
+
 
 }

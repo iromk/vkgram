@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.load_albums:
                 viewPagerAdapter.addFragment(
                         "My pics",
-                        LocalPicturesAlbumFragment.newInstance());
+                        LocalPicturesAlbumFragment.create());
                 viewPagerAdapter.notifyDataSetChanged();
                 return true; //loadAlbums();
             case R.id.load_followers:

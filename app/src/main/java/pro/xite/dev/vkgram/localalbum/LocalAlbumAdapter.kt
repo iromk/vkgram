@@ -1,28 +1,28 @@
 package pro.xite.dev.vkgram.localalbum
 
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.card_picture.*
-import pro.xite.dev.vkgram.Application
 import pro.xite.dev.vkgram.R
+import timber.log.Timber
 
-class LocalAlbumAdapter : RecyclerView.Adapter<LocalAlbumAdapter.ViewHolder>() {
+class LocalAlbumAdapter(private val p: LocalAlbumPresenter) : RecyclerView.Adapter<LocalAlbumAdapter.PictureViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d(TAG, "onCreateViewHolder: ")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PictureViewHolder {
+        Timber.d("onCreateViewHolder: ")
         val cv = LayoutInflater.from(parent.context)
                 .inflate(R.layout.card_picture, parent, false) as CardView
-        return ViewHolder(cv)
+        return PictureViewHolder(cv)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PictureViewHolder, position: Int) {
+        p.showCard(holder, position)
+        /*
         // Get the dimensions of the View
         val targetW = 150
         val targetH = 150
@@ -43,26 +43,18 @@ class LocalAlbumAdapter : RecyclerView.Adapter<LocalAlbumAdapter.ViewHolder>() {
         bmOptions.inSampleSize = scaleFactor
 
         val bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        holder.setImage(bitmap)
+        holder.setImage(bitmap)*/
     }
 
-    override fun getItemCount(): Int {
-        return 15
-    }
+    override fun getItemCount(): Int = p.count
 
-    inner class ViewHolder(override val containerView: View?) :
-            RecyclerView.ViewHolder(containerView), LayoutContainer {
+    inner class PictureViewHolder(override val containerView: View?) :
+            RecyclerView.ViewHolder(containerView), LayoutContainer, AlbumItem {
 
-        init {
-        }
-        
-        fun setImage(bitmap: Bitmap) {
+        override fun setImage(pictureFile: String) {
+            val bitmap = BitmapFactory.decodeFile(pictureFile)
             card_picture_picture.setImageBitmap(bitmap)
         }
-    }
-
-    companion object {
-        private val TAG = String.format("%s/%s", Application.APP_TAG, LocalAlbumAdapter::class.java.simpleName)
     }
 
 }
