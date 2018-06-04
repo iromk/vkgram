@@ -50,6 +50,7 @@ import pro.xite.dev.vkgram.followers.FollowersFragment;
 import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
 import pro.xite.dev.vkgram.statekeeper.KeepState;
 import pro.xite.dev.vkgram.statekeeper.StateKeeper;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -175,17 +176,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (isResumed) {
                     switch (res) {
                         case LoggedOut:
-                            Log.d(TAG, "wakeUpSession: invoke login");
+                            Timber.tag(TAG).d("wakeUpSession: invoke login");
                             tryLogin();
                             break;
                         case LoggedIn:
-                            Log.d(TAG, "wakeUpSession: already logged in");
+                            Timber.tag(TAG).d("wakeUpSession: already logged in");
                             break;
                         case Pending:
-                            Log.d(TAG, "wakeUpSession: pending state");
+                            Timber.tag(TAG).d("wakeUpSession: pending state");
                             break;
                         case Unknown:
-                            Log.d(TAG, "wakeUpSession: unknown state");
+                            Timber.tag(TAG).d("wakeUpSession: unknown state");
                             break;
                     }
                 }
@@ -193,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onError(VKError error) {
-                Log.e(TAG, "wakeUpSession.onError: " + error.toString());
+                Timber.tag(TAG).e("wakeUpSession.onError: %s", error.toString());
             }
         });
     }
@@ -207,10 +208,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onResume();
         isResumed = true;
         if (VKSdk.isLoggedIn()) {
-            Log.d(TAG, "onResume: logged in");
+            Timber.tag(TAG).d("onResume: logged in");
             vkModel.getLoggedInUser();
         } else {
-            Log.d(TAG, "onResume: not logged in");
+            Timber.tag(TAG).d("onResume: not logged in");
             tryLogin();
         }
     }
@@ -244,8 +245,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         "pro.xite.dev.vkgram.fileprovider",
                         newPictureFile);
 
-                Log.d(TAG, String.format("onFabClick: \nUri: %s\nFile:%s",
-                           fileUri.toString(), newPictureFile.toString()));
+                Timber.tag(TAG).d("onFabClick: \nUri: %s\nFile:%s",
+                        fileUri.toString(), newPictureFile.toString());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
                 startActivityForResult(takePictureIntent, INTENT_IMAGE_CAPTURE);
             }
@@ -267,27 +268,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState: ");
+        Timber.tag(TAG).d("onSaveInstanceState: ");
         debugShowTags("onSaveInstanceState");
         StateKeeper.bundle(this, outState);
         super.onSaveInstanceState(outState);
     }
 
     private void debugShowTags(String s) {
-        Log.v(TAG, String.format("getTag() at %s", s));
+        Timber.tag(TAG).v(String.format("getTag() at %s", s));
         for(int i=0; i < getSupportFragmentManager().getFragments().size(); i++)
-            Log.v(TAG, String.format("getSupportFragmentManager.getTag() == %s", getSupportFragmentManager().getFragments().get(i).getTag()));
+            Timber.tag(TAG).v("getSupportFragmentManager.getTag() == %s", getSupportFragmentManager().getFragments().get(i).getTag());
 
         if(viewPagerAdapter != null)
         for(int i=0; i < viewPagerAdapter.getCount(); i++)
-            Log.v(TAG, String.format("viewPagerAdapter          getTag() == %s", viewPagerAdapter.getItem(i).getTag()));
-        else Log.v(TAG, "viewPagerAdapter          getTag() == null");
+            Timber.tag(TAG).v("viewPagerAdapter          getTag() == %s", viewPagerAdapter.getItem(i).getTag());
+        else Timber.tag(TAG).v("viewPagerAdapter          getTag() == null");
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.w(TAG, String.format("onActivityResult: requestCode == %d, resultCode == %d", requestCode, resultCode));
+        Timber.tag(TAG).w("onActivityResult: requestCode == %d, resultCode == %d", requestCode, resultCode);
 
         switch (requestCode) {
             case ThemeSelectActivity.REQUEST_CODE:
@@ -316,11 +317,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void resultCaptureImage(int resultCode) {
         if (resultCode == RESULT_OK) {
-            Log.d(TAG, "onActivityResult: OK, INTENT_IMAGE_CAPTURE'd");
+            Timber.tag(TAG).d("onActivityResult: OK, INTENT_IMAGE_CAPTURE'd");
             Snackbar.make(coordinatorLayout, "Picture saved. See local album.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         } else {
-            Log.d(TAG, "onActivityResult: FAIL, INTENT_IMAGE_CAPTURE'd");
+            Timber.tag(TAG).d("onActivityResult: FAIL, INTENT_IMAGE_CAPTURE'd");
             Snackbar.make(coordinatorLayout, "Capture canceled.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             if (!newPictureFile.delete())
@@ -333,13 +334,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
             @Override
             public void onResult(VKAccessToken res) {
-                Log.d(TAG, String.format("onResult: User passed Authorization\ntoken [%s]",res.accessToken));
+                Timber.tag(TAG).d("onResult: User passed Authorization\ntoken [%s]", res.accessToken);
                 onLoginStateChanged();
             }
 
             @Override
             public void onError(VKError error) {
-                Log.d(TAG, "onResult: User didn't pass Authorization");
+                Timber.tag(TAG).d("onResult: User didn't pass Authorization");
             }
         };
         VKSdk.onActivityResult(requestCode, resultCode, data, callback);
@@ -349,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         final String imageFileName = "JPEG_" + timeStamp + "_";
         final File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        Log.d(TAG, String.format("createImageFile: %s %s", storageDir.toString(), imageFileName.toString() ));
+        Timber.tag(TAG).d("createImageFile: %s %s", storageDir.toString(), imageFileName.toString());
         return File.createTempFile(
                 imageFileName,
                 ".jpg",
