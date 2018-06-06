@@ -40,6 +40,7 @@ public class Application extends android.app.Application {
         }
     };
     private static SharedPreferences prefSettings;
+    public static Context context;
 
     @Override
     public void onCreate() {
@@ -52,6 +53,7 @@ public class Application extends android.app.Application {
         VKSdk.initialize(this);
         initImageLoader(this);
 
+        context = getApplicationContext();
         prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
     }
 

@@ -1,6 +1,6 @@
 package pro.xite.dev.vkgram.localalbum
 
-import android.graphics.BitmapFactory
+import android.graphics.Bitmap
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -51,9 +51,9 @@ class LocalAlbumAdapter(private val p: LocalAlbumPresenter) : RecyclerView.Adapt
     inner class PictureViewHolder(override val containerView: View?) :
             RecyclerView.ViewHolder(containerView), LayoutContainer, AlbumItem {
 
-        override fun setImage(pictureFile: String) {
-            val bitmap = BitmapFactory.decodeFile(pictureFile)
-            card_picture_picture.setImageBitmap(bitmap)
+        override fun setImage(pictureFile: Bitmap) {
+//            val bitmap = BitmapFactory.decodeStream(pictureFile)
+            card_picture_picture.setImageBitmap(pictureFile)
         }
     }
 

@@ -9,6 +9,7 @@ import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import kotlinx.android.synthetic.main.content_recycler.*
+import pro.xite.dev.vkgram.Application
 import pro.xite.dev.vkgram.R
 /**
  * Created by Roman Syrchin on 6/3/18.
@@ -29,7 +30,7 @@ class LocalPicturesAlbumFragment : MvpAppCompatFragment(), AlbumView  {
 
     @ProvidePresenter
     fun provideAlbumPresent() : LocalAlbumPresenter {
-        return LocalAlbumPresenter(LocalAlbumModel())
+        return LocalAlbumPresenter(LocalAlbumModel(Application.context))
     }
 
     override fun initRecyclerView() {
