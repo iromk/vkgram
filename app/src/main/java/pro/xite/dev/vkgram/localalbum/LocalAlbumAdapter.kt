@@ -1,6 +1,6 @@
 package pro.xite.dev.vkgram.localalbum
 
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.card_picture.*
+import pro.xite.dev.vkgram.Application.context
 import pro.xite.dev.vkgram.R
 import timber.log.Timber
 
@@ -51,9 +52,15 @@ class LocalAlbumAdapter(private val p: LocalAlbumPresenter) : RecyclerView.Adapt
     inner class PictureViewHolder(override val containerView: View?) :
             RecyclerView.ViewHolder(containerView), LayoutContainer, AlbumItem {
 
-        override fun setImage(pictureFile: Bitmap) {
-//            val bitmap = BitmapFactory.decodeStream(pictureFile)
-            card_picture_picture.setImageBitmap(pictureFile)
+        private val imageStubKim get() = BitmapFactory.decodeResource(context.resources, R.drawable.icons8_kim_kardashian_filled_100)
+
+        override fun setImage(pictureFile: String?) {
+            val pic =
+                    if(pictureFile.isNullOrEmpty())
+                        imageStubKim
+                    else
+                        BitmapFactory.decodeFile(pictureFile)
+            card_picture_picture.setImageBitmap(pic)
         }
     }
 

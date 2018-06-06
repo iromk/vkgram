@@ -21,7 +21,9 @@ class LocalAlbumPresenter(private val m: LocalAlbumModel) : MvpPresenter<AlbumVi
     }
 
     fun showCard(itemView: AlbumItem, position: Int) {
-        itemView.setImage(m.getPicture(position))
+        val pictureFile : String? = m.getPicture(position)
+        pictureFile ?: Timber.w("No picture file found")
+        itemView.setImage(pictureFile)
     }
 
 
