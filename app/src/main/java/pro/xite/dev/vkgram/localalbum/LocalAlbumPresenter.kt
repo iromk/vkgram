@@ -14,7 +14,6 @@ class LocalAlbumPresenter(private val m: LocalAlbumModel) : MvpPresenter<AlbumVi
         get() = m.count
 
     override fun onFirstViewAttach() {
-        Timber.v("onFirstViewAttach")
         super.onFirstViewAttach()
 
         viewState.initRecyclerView()

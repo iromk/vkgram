@@ -58,8 +58,15 @@ class LocalAlbumAdapter(private val p: LocalAlbumPresenter) : RecyclerView.Adapt
             val pic =
                     if(pictureFile.isNullOrEmpty())
                         imageStubKim
-                    else
-                        BitmapFactory.decodeFile(pictureFile)
+                    else {
+                        val opt = BitmapFactory.Options()
+//                        opt.inJustDecodeBounds = true
+//                        BitmapFactory.decodeFile(pictureFile, opt)
+//                        val minify = Math.min(opt.outHeight/200, opt.outWidth/200)
+//                        opt.inJustDecodeBounds = false
+//                        opt.inSampleSize = minify
+                        BitmapFactory.decodeFile(pictureFile, opt)
+                    }
             card_picture_picture.setImageBitmap(pic)
         }
     }

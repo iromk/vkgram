@@ -10,7 +10,8 @@ import java.io.File
 
 class LocalAlbumModel(private val context: Context?) {
 
-    val px: Array<File>? get() = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.listFiles()
+    val px: Array<File>?
+        get() = context?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.listFiles()
 
     val count: Int get() = px?.size ?: 0
 
