@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram.statekeeper;
+package pro.xite.dev.vkgram.util.statekeeper;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -6,7 +6,7 @@ import android.util.Log;
 
 import java.lang.reflect.Field;
 
-import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.main.Application;
 
 import static java.util.Objects.requireNonNull;
 

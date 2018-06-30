@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram.view;
+package pro.xite.dev.vkgram.main.view;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -20,7 +20,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,6 +28,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -43,16 +43,17 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.main.Application;
 import pro.xite.dev.vkgram.R;
-import pro.xite.dev.vkgram.VkViewModel;
+import pro.xite.dev.vkgram.main.model.VkViewModel;
 import pro.xite.dev.vkgram.followers.FollowersFragment;
 import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
-import pro.xite.dev.vkgram.statekeeper.KeepState;
-import pro.xite.dev.vkgram.statekeeper.StateKeeper;
+import pro.xite.dev.vkgram.util.statekeeper.StateKeeper;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends MvpAppCompatActivity implements
+        MainView,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
     private static final int INTENT_IMAGE_CAPTURE = 0x1441;
@@ -60,11 +61,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private boolean isResumed = false;
 
-    @KeepState(ThemeSelectActivity.KEY_THEME_ID)
-    @StyleRes
+//    @KeepState(ThemeSelectActivity.KEY_THEME_ID)
+//    @StyleRes
     private int theme;
 
-    @KeepState
+//    @KeepState
     private boolean followersTab;
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(savedInstanceState != null) {
             Application.settings().edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
 
-            if(followersTab) makeFollowersTab();
+//            if(followersTab) makeFollowersTab();
 
             debugShowTags("onRecreate");
         }

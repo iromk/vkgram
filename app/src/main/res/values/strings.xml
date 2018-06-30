@@ -11,5 +11,5 @@
     <string name="shared_prefs_default">&app_name;.default</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="fab_behavior">pro.xite.dev.vkgram.FabBehavior</string>
+    <string name="fab_behavior">pro.xite.dev.vkgram.main.view.ui.FabBehavior</string>
 </resources>

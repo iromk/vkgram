@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram.view;
+package pro.xite.dev.vkgram.main.view;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

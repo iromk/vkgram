@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram.view;
+package pro.xite.dev.vkgram.main.view;
 
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -10,7 +10,7 @@ import android.util.Pair;
 
 import java.util.ArrayList;
 
-import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.main.Application;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
 

@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,15 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.vk.sdk.api.model.VKApiUserFull;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.main.Application;
 import pro.xite.dev.vkgram.R;
-import pro.xite.dev.vkgram.VkViewModel;
+import pro.xite.dev.vkgram.main.model.VkViewModel;
 
-public class FollowersFragment extends Fragment {
+public class FollowersFragment extends MvpAppCompatFragment {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, FollowersFragment.class.getSimpleName());
 

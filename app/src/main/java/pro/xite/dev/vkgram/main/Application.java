@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram;
+package pro.xite.dev.vkgram.main;
 
 
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.facebook.stetho.Stetho;
+import com.squareup.leakcanary.LeakCanary;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
@@ -18,7 +20,9 @@ import com.vk.sdk.util.VKUtil;
 
 import java.util.Arrays;
 
-import pro.xite.dev.vkgram.view.MainActivity;
+import pro.xite.dev.vkgram.BuildConfig;
+import pro.xite.dev.vkgram.R;
+import pro.xite.dev.vkgram.main.view.MainActivity;
 import timber.log.Timber;
 
 public class Application extends android.app.Application {
@@ -45,6 +49,13 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if(LeakCanary.isInAnalyzerProcess(this))
+            return;
+        else
+            LeakCanary.install(this);
+
+        Stetho.initializeWithDefaults(this);
 
         if(BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
         Timber.d("Application onCreate: ");

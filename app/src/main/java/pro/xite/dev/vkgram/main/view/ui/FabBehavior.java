@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram;
+package pro.xite.dev.vkgram.main.view.ui;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

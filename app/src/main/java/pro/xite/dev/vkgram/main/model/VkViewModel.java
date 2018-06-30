@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram;
+package pro.xite.dev.vkgram.main.model;
 
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
@@ -17,6 +17,8 @@ import com.vk.sdk.api.model.VKUsersArray;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
+
+import pro.xite.dev.vkgram.main.Application;
 
 public class VkViewModel extends AndroidViewModel {
 

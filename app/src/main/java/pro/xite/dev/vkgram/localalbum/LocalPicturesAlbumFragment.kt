@@ -33,6 +33,7 @@ class LocalPicturesAlbumFragment : MvpAppCompatFragment(), AlbumView  {
     }
 
     override fun initRecyclerView() {
+        recycler_view.setItemViewCacheSize(22)
         recycler_view.layoutManager = GridLayoutManager(context, 2)
         recycler_view.adapter = LocalAlbumAdapter(p)
     }

@@ -12,7 +12,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKUsersArray;
 
-import pro.xite.dev.vkgram.Application;
+import pro.xite.dev.vkgram.main.Application;
 import pro.xite.dev.vkgram.R;
 
 public class FollowersAdapter extends RecyclerView.Adapter {

@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram.statekeeper;
+package pro.xite.dev.vkgram.util.statekeeper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
