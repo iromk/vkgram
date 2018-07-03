@@ -44,7 +44,12 @@ public class Application extends android.app.Application {
         }
     };
     private static SharedPreferences prefSettings;
-    public static Context context;
+
+    public static Application getInstance() {
+        return instance;
+    }
+
+    private static Application instance;
 
     @Override
     public void onCreate() {
@@ -57,6 +62,8 @@ public class Application extends android.app.Application {
 
         Stetho.initializeWithDefaults(this);
 
+        instance = this;
+
         if(BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
         Timber.d("Application onCreate: ");
         getCertFingerprint();
@@ -64,7 +71,6 @@ public class Application extends android.app.Application {
         VKSdk.initialize(this);
         initImageLoader(this);
 
-        context = getApplicationContext();
         prefSettings = getSharedPreferences(getString(R.string.shared_prefs_default), MODE_PRIVATE);
     }
 

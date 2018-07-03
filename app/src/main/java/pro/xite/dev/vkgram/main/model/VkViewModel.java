@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import pro.xite.dev.vkgram.main.Application;
 
-public class VkViewModel extends AndroidViewModel {
+public class VkViewModel extends AndroidViewModel implements VkDataSource {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, VkViewModel.class.getSimpleName());
 
@@ -39,8 +39,12 @@ public class VkViewModel extends AndroidViewModel {
         return vkFollowers;
     }
 
+    public VKApiUserFull getLoggedInUser() {
+        return getLoggedInUserLiveData().getValue();
+    }
+
     @NonNull
-    public LiveData<VKApiUserFull> getLoggedInUser() {
+    public LiveData<VKApiUserFull> getLoggedInUserLiveData() {
         if (vkLoggedInUser == null)
             vkLoggedInUser = new MutableLiveData<>();
         if (VKAccessToken.currentToken() != null)
@@ -53,7 +57,7 @@ public class VkViewModel extends AndroidViewModel {
                 VKParameters.from(
                         VKApiConst.USER_ID, userId,
                         VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo_200"),
-                VKUsersArray.class);
+                        VKUsersArray.class);
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             @SuppressWarnings("unchecked")
@@ -101,7 +105,9 @@ public class VkViewModel extends AndroidViewModel {
         });
     }
 
+    @Override
     public void clearLoggedInUser() {
         vkLoggedInUser.setValue(null);
     }
+
 }

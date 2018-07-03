@@ -1,6 +1,5 @@
 package pro.xite.dev.vkgram.main.view;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,7 +20,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,11 +27,9 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.model.VKApiUserFull;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,12 +39,13 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import pro.xite.dev.vkgram.main.Application;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import pro.xite.dev.vkgram.R;
-import pro.xite.dev.vkgram.main.model.VkViewModel;
 import pro.xite.dev.vkgram.followers.FollowersFragment;
 import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
-import pro.xite.dev.vkgram.util.statekeeper.StateKeeper;
+import pro.xite.dev.vkgram.main.Application;
+import pro.xite.dev.vkgram.main.model.VkViewModel;
+import pro.xite.dev.vkgram.main.presenter.MainViewPresenter;
 import timber.log.Timber;
 
 public class MainActivity extends MvpAppCompatActivity implements
@@ -58,14 +55,8 @@ public class MainActivity extends MvpAppCompatActivity implements
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
     private static final int INTENT_IMAGE_CAPTURE = 0x1441;
     public static final int VK_AUTH_SERVICE_TYPE = 10485;
+            // == VKServiceActivity.VKServiceType.Authorization.getOuterCode()
 
-    private boolean isResumed = false;
-
-//    @KeepState(ThemeSelectActivity.KEY_THEME_ID)
-//    @StyleRes
-    private int theme;
-
-//    @KeepState
     private boolean followersTab;
 
     @BindView(R.id.toolbar_main) Toolbar toolbar;
@@ -78,67 +69,51 @@ public class MainActivity extends MvpAppCompatActivity implements
     @BindView(R.id.vk_active_user_avatar) NetworkImageView nivActiveUserAvatar;
     @BindView(R.id.tab_layout) TabLayout tabLayout;
     @BindView(R.id.viewpager) ViewPager viewPager;
-    TextView tvVkUserName;
+    TextView tvActiveUserNameInDrawer;
+
     private File newPictureFile;
     private ViewPagerAdapter viewPagerAdapter;
 
-    private VkViewModel vkModel;
+    @InjectPresenter MainViewPresenter p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "onCreate:");
+        Timber.d("onCreate:");
 
         super.onCreate(savedInstanceState);
-        vkModel = ViewModelProviders.of(this).get(VkViewModel.class);
 
-        setDefaults();
-        loadPreferences();
-        StateKeeper.unbundle(savedInstanceState, this);
-
-        setTheme(theme);
+        setTheme(p.getTheme());
         setContentView(R.layout.drawer_activity_main);
 
         ButterKnife.bind(this);
+        tvActiveUserNameInDrawer = navigationView.getHeaderView(0).findViewById(R.id.vk_user_full_name);
+
         initUi();
-        initSession();
-        updateUi(VKSdk.isLoggedIn());
         initTabs();
+    }
 
-        debugShowTags("onCreate");
-
-        setActiveUser(); 
-
-        if(savedInstanceState != null) {
-            Application.settings().edit().putInt(ThemeSelectActivity.KEY_THEME_ID, theme).apply();
-
-//            if(followersTab) makeFollowersTab();
-
-            debugShowTags("onRecreate");
-        }
+    @ProvidePresenter
+    MainViewPresenter provideMainViewPresenter() {
+        return new MainViewPresenter(AndroidSchedulers.mainThread(),
+                                     ViewModelProviders.of(this).get(VkViewModel.class));
     }
 
     private void makeFollowersTab() {
-        final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser().getValue());
+//        final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser().getValue());
+        final Fragment f = FollowersFragment.newInstance(p.getLoggedInUser());
         viewPagerAdapter.addFragment("", f);
         viewPagerAdapter.notifyDataSetChanged();
         tabLayout.getTabAt(0).setIcon(R.drawable.followers); // FIXME possible npe/bug point
         followersTab = true;
     }
 
-    private void setDefaults() {
-        theme = R.style.VkgramTheme_Greengo;
-        followersTab = false;
-    }
-
-    private void loadPreferences() {
+/*    private void loadPreferences() {
         @StyleRes int savedTheme = Application.settings().getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
         if(savedTheme != ThemeSelectActivity.NONE)
             theme = savedTheme;
-    }
+    }*/
 
     private void initUi() {
-        tvVkUserName = navigationView.getHeaderView(0).findViewById(R.id.vk_user_full_name);
-
         setSupportActionBar(toolbar);
         collapsingToolbarLayout.setTitle(getString(R.string.app_name));
         collapsingToolbarLayout.setExpandedTitleGravity(Gravity.END|Gravity.CENTER_VERTICAL);
@@ -165,62 +140,9 @@ public class MainActivity extends MvpAppCompatActivity implements
 //        tabLayout.addTab(tab);
     }
 
-    private void updateUi(final boolean isLoggedIn) {
-        navigationView.getMenu().setGroupVisible(R.id.logged_in, isLoggedIn);
-        navigationView.getMenu().setGroupVisible(R.id.logged_out, !isLoggedIn);
-    }
-
-    private void initSession() {
-        VKSdk.wakeUpSession(this, new VKCallback<VKSdk.LoginState>() {
-            @Override
-            public void onResult(VKSdk.LoginState res) {
-                if (isResumed) {
-                    switch (res) {
-                        case LoggedOut:
-                            Timber.tag(TAG).d("wakeUpSession: invoke login");
-                            tryLogin();
-                            break;
-                        case LoggedIn:
-                            Timber.tag(TAG).d("wakeUpSession: already logged in");
-                            break;
-                        case Pending:
-                            Timber.tag(TAG).d("wakeUpSession: pending state");
-                            break;
-                        case Unknown:
-                            Timber.tag(TAG).d("wakeUpSession: unknown state");
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void onError(VKError error) {
-                Timber.tag(TAG).e("wakeUpSession.onError: %s", error.toString());
-            }
-        });
-    }
-
-    private void tryLogin() {
+    @Override
+    public void invokeVkLoginActivity() {
         VKSdk.login(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isResumed = true;
-        if (VKSdk.isLoggedIn()) {
-            Timber.tag(TAG).d("onResume: logged in");
-            vkModel.getLoggedInUser();
-        } else {
-            Timber.tag(TAG).d("onResume: not logged in");
-            tryLogin();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        isResumed = false;
-        super.onPause();
     }
 
     @Override
@@ -266,16 +188,7 @@ public class MainActivity extends MvpAppCompatActivity implements
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Timber.tag(TAG).d("onSaveInstanceState: ");
-        debugShowTags("onSaveInstanceState");
-        StateKeeper.bundle(this, outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    private void debugShowTags(String s) {
+/*    private void debugShowTags(String s) {
         Timber.tag(TAG).v(String.format("getTag() at %s", s));
         for(int i=0; i < getSupportFragmentManager().getFragments().size(); i++)
             Timber.tag(TAG).v("getSupportFragmentManager.getTag() == %s", getSupportFragmentManager().getFragments().get(i).getTag());
@@ -285,7 +198,7 @@ public class MainActivity extends MvpAppCompatActivity implements
             Timber.tag(TAG).v("viewPagerAdapter          getTag() == %s", viewPagerAdapter.getItem(i).getTag());
         else Timber.tag(TAG).v("viewPagerAdapter          getTag() == null");
 
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -299,7 +212,7 @@ public class MainActivity extends MvpAppCompatActivity implements
                 resultCaptureImage(resultCode);
                 break;
             case VK_AUTH_SERVICE_TYPE:
-                resultVkAuthorization(requestCode, resultCode, data);
+                VKSdk.onActivityResult(requestCode, resultCode, data, p.getOnLogin());
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
@@ -310,7 +223,7 @@ public class MainActivity extends MvpAppCompatActivity implements
         if (resultCode == ThemeSelectActivity.RESULT_THEME_CHANGED && data != null) {
             final @StyleRes int theme = data.getIntExtra(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
             if (theme != ThemeSelectActivity.NONE) {
-                this.theme = theme;
+                p.onThemeChange(theme);
                 recreate();
             }
         }
@@ -331,22 +244,6 @@ public class MainActivity extends MvpAppCompatActivity implements
         newPictureFile = null;
     }
 
-    private void resultVkAuthorization(int requestCode, int resultCode, Intent data) {
-        VKCallback<VKAccessToken> callback = new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken res) {
-                Timber.tag(TAG).d("onResult: User passed Authorization\ntoken [%s]", res.accessToken);
-                onLoginStateChanged();
-            }
-
-            @Override
-            public void onError(VKError error) {
-                Timber.tag(TAG).d("onResult: User didn't pass Authorization");
-            }
-        };
-        VKSdk.onActivityResult(requestCode, resultCode, data, callback);
-    }
-
     private File createImageFile() throws IOException {
         final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         final String imageFileName = "JPEG_" + timeStamp + "_";
@@ -359,15 +256,13 @@ public class MainActivity extends MvpAppCompatActivity implements
             );
     }
 
-    private void setActiveUser() {
-        final Observer<VKApiUserFull> activeUserObserver = u -> {
+    @Override
+    public void setActiveUser() {
+        p.getVkDataSource().getLoggedInUserLiveData().observe(this, u -> {
             if(u != null) {
-                tvVkUserName.setText(String.format("%s %s", u.first_name, u.last_name));
-                tvActiveUserName.setText(String.format("%s %s", u.first_name, u.last_name));
-                nivActiveUserAvatar.setImageUrl(u.photo_200, Application.getImageLoader());
-            }
-        };
-        vkModel.getLoggedInUser().observe(this, activeUserObserver);
+                setLoggedUserName(u.first_name, u.last_name);
+                setLoggedUserAvatar(u.photo_200);
+            }});
     }
 
     @Override
@@ -383,30 +278,45 @@ public class MainActivity extends MvpAppCompatActivity implements
                 makeFollowersTab();
                 return true;
             case R.id.logout:
-                return logoutVk();
+                return p.onLogoutVk();
             case R.id.login:
-                tryLogin();
+                invokeVkLoginActivity();
                 return true;
         }
 
         return false;
     }
 
-    private void onLoginStateChanged() {
-        if (VKSdk.isLoggedIn()) {
-            vkModel.getLoggedInUser();
-            updateUi(true);
-        } else {
-            vkModel.clearLoggedInUser();
-            updateUi(false);
-        }
+    @Override
+    public void setLoggedUserName(CharSequence firstName, CharSequence lastName) {
+        tvActiveUserNameInDrawer.setText(String.format("%s %s", firstName, lastName));
+        tvActiveUserName.setText(String.format("%s %s", firstName, lastName));
     }
+
+    @Override
+    public void setLoggedUserAvatar(String url) {
+        nivActiveUserAvatar.setImageUrl(url, Application.getImageLoader());
+    }
+
+    @Override
+    public void setUiStateLoggedIn() {
+        navigationView.getMenu().setGroupVisible(R.id.logged_in, true);
+        navigationView.getMenu().setGroupVisible(R.id.logged_out, false);
+    }
+
+    @Override
+    public void setUiStateLoggedOut() {
+        navigationView.getMenu().setGroupVisible(R.id.logged_in, false);
+        navigationView.getMenu().setGroupVisible(R.id.logged_out, true);
+    }
+/*
 
     private boolean logoutVk() {
         VKSdk.logout();
         onLoginStateChanged();
         return true;
     }
+*/
 
 /*
     private boolean loadAlbums() {

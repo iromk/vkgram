@@ -12,8 +12,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.card_picture.*
-import pro.xite.dev.vkgram.main.Application.context
 import pro.xite.dev.vkgram.R
+import pro.xite.dev.vkgram.main.Application
 import timber.log.Timber
 
 class LocalAlbumAdapter(private val p: LocalAlbumPresenter) : RecyclerView.Adapter<LocalAlbumAdapter.PictureViewHolder>() {
@@ -57,7 +57,7 @@ class LocalAlbumAdapter(private val p: LocalAlbumPresenter) : RecyclerView.Adapt
     inner class PictureViewHolder(override val containerView: View?) :
             RecyclerView.ViewHolder(containerView), LayoutContainer, AlbumItem {
 
-        private val imageStubKim get() = BitmapFactory.decodeResource(context.resources, R.drawable.icons8_kim_kardashian_filled_100)
+        private val imageStubKim get() = BitmapFactory.decodeResource(Application.getInstance().resources, R.drawable.icons8_kim_kardashian_filled_100)
 
         override fun setImage(pictureFile: String?) {
             Timber.v("preparing view %s", pictureFile)
