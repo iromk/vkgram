@@ -8,7 +8,7 @@ import com.arellomobile.mvp.MvpView;
 public interface MainView extends MvpView {
 
     void invokeVkLoginActivity();
-    void setActiveUser();
+    void showActiveUser();
     void setLoggedUserName(CharSequence firstName, CharSequence lastName);
     void setLoggedUserAvatar(String url);
     void setUiStateLoggedIn();

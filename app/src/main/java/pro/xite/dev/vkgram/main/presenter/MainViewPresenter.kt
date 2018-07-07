@@ -9,23 +9,25 @@ import com.vk.sdk.api.VKError
 import com.vk.sdk.api.model.VKApiUserFull
 import io.reactivex.Scheduler
 import pro.xite.dev.vkgram.main.model.ApplicationModel
-import pro.xite.dev.vkgram.main.model.VkDataSource
+import pro.xite.dev.vkgram.main.model.VkApiDataSource
 import pro.xite.dev.vkgram.main.model.VkSession
 import pro.xite.dev.vkgram.main.view.MainView
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * Created by Roman Syrchin on 6/30/18.
  */
 @InjectViewState
-class MainViewPresenter(private val mainThreadScheduler: Scheduler,
-                        private val vkDataSource: VkDataSource) : MvpPresenter<MainView>() {
+class MainViewPresenter(private val mainThreadSche1duler: Scheduler,
+                        private val vkDataSource: VkApiDataSource) : MvpPresenter<MainView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         initVkSession()
     }
 
+    @Inject lateinit var mainThreadScheduler: Scheduler
     val m = ApplicationModel()
 
     fun onThemeChange(theme : Int ) {
@@ -47,7 +49,6 @@ class MainViewPresenter(private val mainThreadScheduler: Scheduler,
         if (VKSdk.isLoggedIn()) {
             Timber.v("U r logged in already")
             viewState.setUiStateLoggedIn()
-            viewState.setActiveUser()
         } else
         VkSession.init(object : VKCallback<VKSdk.LoginState> {
             override fun onResult(res: VKSdk.LoginState) {
@@ -69,7 +70,7 @@ class MainViewPresenter(private val mainThreadScheduler: Scheduler,
         })
     }
 
-    fun getVkDataSource() : VkDataSource = vkDataSource
+    fun getVkDataSource() : VkApiDataSource = vkDataSource
 
     fun onLogoutVk() : Boolean {
         VKSdk.logout()

@@ -15,23 +15,25 @@ import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKUsersArray;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import pro.xite.dev.vkgram.main.Application;
 
-public class VkViewModel extends AndroidViewModel implements VkDataSource {
+public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource {
 
-    private static final String TAG = String.format("%s/%s", Application.APP_TAG, VkViewModel.class.getSimpleName());
+    private static final String TAG = String.format("%s/%s", Application.APP_TAG, VkApiViewModel.class.getSimpleName());
 
     private MutableLiveData<VKUsersArray> vkFollowers;
     private MutableLiveData<VKApiUserFull> vkLoggedInUser;
 
-    public VkViewModel(@NonNull android.app.Application application) {
+    public VkApiViewModel(@NonNull android.app.Application application) {
         super(application);
     }
 
-    public LiveData<VKUsersArray> getFollowers() {
+    public LiveData<VKUsersArray> getFollowersLiveData() {
         if (vkFollowers == null) {
             vkFollowers = new MutableLiveData<>();
             loadFollowers();
@@ -63,6 +65,12 @@ public class VkViewModel extends AndroidViewModel implements VkDataSource {
             @SuppressWarnings("unchecked")
             public void onComplete(VKResponse response) {
                 try {
+                    try {
+                        Thread.sleep(5000
+                        );
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     VKUsersArray users = (VKUsersArray) (response.parsedModel);
                     vkLoggedInUser.setValue(users.get(0));
                 } catch (ClassCastException e) {
@@ -106,8 +114,26 @@ public class VkViewModel extends AndroidViewModel implements VkDataSource {
     }
 
     @Override
+    public void executeGetFollowers(VKRequest.VKRequestListener listener) {
+        VKRequest request = new VKRequest("users.getFollowers");
+        request.addExtraParameters(
+                VKParameters.from(VKApiConst.USER_ID, 1,
+                        VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo_200",
+                        VKApiConst.COUNT, 333,
+                        VKApiConst.OFFSET, 0
+                ));
+        request.setModelClass(VKUsersArray.class);
+        request.executeWithListener(listener);
+    }
+
+    @Override
     public void clearLoggedInUser() {
         vkLoggedInUser.setValue(null);
     }
 
+    @NotNull
+    @Override
+    public VKApiUserFull getUser() {
+        return null;
+    }
 }

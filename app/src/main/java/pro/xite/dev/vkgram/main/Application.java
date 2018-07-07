@@ -22,6 +22,8 @@ import java.util.Arrays;
 
 import pro.xite.dev.vkgram.BuildConfig;
 import pro.xite.dev.vkgram.R;
+import pro.xite.dev.vkgram.di.AppComponent;
+import pro.xite.dev.vkgram.di.DaggerAppComponent;
 import pro.xite.dev.vkgram.main.view.MainActivity;
 import timber.log.Timber;
 
@@ -31,6 +33,12 @@ public class Application extends android.app.Application {
 
     private RequestQueue requestQueue;
     private static ImageLoader imageLoader;
+
+    public static AppComponent getAppComponent() {
+        return appComponent;
+    }
+
+    static private AppComponent appComponent;
 
     VKAccessTokenTracker vkAccessTokenTracker = new VKAccessTokenTracker() {
         @Override
@@ -63,6 +71,9 @@ public class Application extends android.app.Application {
         Stetho.initializeWithDefaults(this);
 
         instance = this;
+
+        appComponent = DaggerAppComponent.builder()
+                .build();
 
         if(BuildConfig.DEBUG) Timber.plant(new Timber.DebugTree());
         Timber.d("Application onCreate: ");

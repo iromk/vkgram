@@ -29,6 +29,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.vk.sdk.VKSdk;
 
 import java.io.File;
@@ -41,15 +43,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import pro.xite.dev.vkgram.R;
-import pro.xite.dev.vkgram.followers.FollowersFragment;
+import pro.xite.dev.vkgram.followers.ui.FollowersFragment;
+import pro.xite.dev.vkgram.followers.view.FollowersView;
 import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
 import pro.xite.dev.vkgram.main.Application;
-import pro.xite.dev.vkgram.main.model.VkViewModel;
+import pro.xite.dev.vkgram.main.model.VkApiViewModel;
 import pro.xite.dev.vkgram.main.presenter.MainViewPresenter;
 import timber.log.Timber;
 
 public class MainActivity extends MvpAppCompatActivity implements
-        MainView,
+        MainView, FollowersView,
         NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, MainActivity.class.getSimpleName());
@@ -76,36 +79,52 @@ public class MainActivity extends MvpAppCompatActivity implements
 
     @InjectPresenter MainViewPresenter p;
 
+    private VkApiViewModel mVk;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Timber.d("onCreate:");
 
         super.onCreate(savedInstanceState);
 
-        setTheme(p.getTheme());
-        setContentView(R.layout.drawer_activity_main);
-
-        ButterKnife.bind(this);
-        tvActiveUserNameInDrawer = navigationView.getHeaderView(0).findViewById(R.id.vk_user_full_name);
+        mVk = ViewModelProviders.of(this).get(VkApiViewModel.class);
 
         initUi();
-        initTabs();
     }
 
     @ProvidePresenter
     MainViewPresenter provideMainViewPresenter() {
-        return new MainViewPresenter(AndroidSchedulers.mainThread(),
-                                     ViewModelProviders.of(this).get(VkViewModel.class));
+        p = new MainViewPresenter(AndroidSchedulers.mainThread(),
+                                     ViewModelProviders.of(this).get(VkApiViewModel.class));
+        Application.getAppComponent().inject(p);
+        return p;
     }
 
     private void makeFollowersTab() {
-//        final Fragment f = FollowersFragment.newInstance(vkModel.getLoggedInUser().getValue());
-        final Fragment f = FollowersFragment.newInstance(p.getLoggedInUser());
+//        final Fragment f = FollowersFragment.getInstance(vkModel.getLoggedInUser().getValue());
+        final Fragment f = FollowersFragment.getInstance(p.getLoggedInUser());
         viewPagerAdapter.addFragment("", f);
         viewPagerAdapter.notifyDataSetChanged();
         tabLayout.getTabAt(0).setIcon(R.drawable.followers); // FIXME possible npe/bug point
         followersTab = true;
     }
+
+//    @InjectPresenter//(type = PresenterType.GLOBAL)
+//    FollowersPresenter fff;
+//@ProvidePresenter//(type = PresenterType.GLOBAL)
+//public FollowersPresenter provideFollowersPresenter() {
+//    Timber.v("provideFollowersPresenter");
+//    return new FollowersPresenter(
+//            AndroidSchedulers.mainThread(),
+//            ViewModelProviders.of(this).get(VkApiViewModel.class));
+//}
+
+//    @ProvidePresenter(type = PresenterType.GLOBAL)
+//    FollowersPresenter provideFollowersPresenter() {
+//        Timber.v("provideFollowersPresenter");
+//        return new FollowersPresenter(AndroidSchedulers.mainThread(), ViewModelProviders.of(this).get(VkApiViewModel.class));
+//    }
+
 
 /*    private void loadPreferences() {
         @StyleRes int savedTheme = Application.settings().getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
@@ -114,6 +133,12 @@ public class MainActivity extends MvpAppCompatActivity implements
     }*/
 
     private void initUi() {
+        setTheme(p.getTheme());
+        setContentView(R.layout.drawer_activity_main);
+
+        ButterKnife.bind(this);
+        tvActiveUserNameInDrawer = navigationView.getHeaderView(0).findViewById(R.id.vk_user_full_name);
+
         setSupportActionBar(toolbar);
         collapsingToolbarLayout.setTitle(getString(R.string.app_name));
         collapsingToolbarLayout.setExpandedTitleGravity(Gravity.END|Gravity.CENTER_VERTICAL);
@@ -129,6 +154,8 @@ public class MainActivity extends MvpAppCompatActivity implements
 
         drawerMainLayout.addDrawerListener(drawerToggle);
         navigationView.setNavigationItemSelectedListener(this);
+
+        initTabs();
     }
 
     private void initTabs() {
@@ -140,7 +167,7 @@ public class MainActivity extends MvpAppCompatActivity implements
 //        tabLayout.addTab(tab);
     }
 
-    @Override
+    @Override @StateStrategyType(SkipStrategy.class)
     public void invokeVkLoginActivity() {
         VKSdk.login(this);
     }
@@ -257,12 +284,22 @@ public class MainActivity extends MvpAppCompatActivity implements
     }
 
     @Override
-    public void setActiveUser() {
-        p.getVkDataSource().getLoggedInUserLiveData().observe(this, u -> {
+    public void showActiveUser() {
+        Timber.v("awaiting data");
+        mVk.getLoggedInUserLiveData().observe(this, u -> {
             if(u != null) {
+                Timber.v("got data");
                 setLoggedUserName(u.first_name, u.last_name);
+                Timber.v("set user name");
                 setLoggedUserAvatar(u.photo_200);
+                Timber.v("set ava");
             }});
+    }
+
+    private void clearActiveUser() {
+        tvActiveUserName.setText("");
+        tvActiveUserNameInDrawer.setText("");
+        nivActiveUserAvatar.setImageDrawable(getResources().getDrawable(R.drawable.bg_toolbar_shadow_dark));
     }
 
     @Override
@@ -302,12 +339,19 @@ public class MainActivity extends MvpAppCompatActivity implements
     public void setUiStateLoggedIn() {
         navigationView.getMenu().setGroupVisible(R.id.logged_in, true);
         navigationView.getMenu().setGroupVisible(R.id.logged_out, false);
+        showActiveUser();
     }
 
     @Override
     public void setUiStateLoggedOut() {
         navigationView.getMenu().setGroupVisible(R.id.logged_in, false);
         navigationView.getMenu().setGroupVisible(R.id.logged_out, true);
+        clearActiveUser();
+    }
+
+    @Override
+    public void updated() {
+
     }
 /*
 
