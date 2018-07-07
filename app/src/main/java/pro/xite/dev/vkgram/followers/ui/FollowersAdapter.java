@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.arellomobile.mvp.MvpDelegate;
 import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.vk.sdk.api.model.VKUsersArray;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +26,7 @@ public class FollowersAdapter extends MvpBaseAdapter implements FollowersView {
 
     private static final String TAG = String.format("%s/%s", Application.APP_TAG, FollowersAdapter.class.getSimpleName());
 
-    private VKUsersArray vkFollowers;
+//    private VKUsersArray vkFollowers;
 
     @InjectPresenter
     public FollowersPresenter p;
@@ -140,7 +139,7 @@ public class FollowersAdapter extends MvpBaseAdapter implements FollowersView {
 
         @Override
         public void setName(@NotNull String name) {
-            tvUsername.setText("namessss");
+            tvUsername.setText(name);
             tvCity.setText("naddddme");
             tvPosition.setText("11");
 //            nivAvatar.setDefaultImageResId(R.drawable.icons8_kim_kardashian_filled_100);

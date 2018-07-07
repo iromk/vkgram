@@ -3,6 +3,7 @@ package pro.xite.dev.vkgram.di;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import pro.xite.dev.vkgram.di.modules.FollowersRepoModule;
 import pro.xite.dev.vkgram.di.modules.SchedulerModule;
 import pro.xite.dev.vkgram.followers.presenter.FollowersPresenter;
 import pro.xite.dev.vkgram.main.presenter.MainViewPresenter;
@@ -11,7 +12,7 @@ import pro.xite.dev.vkgram.main.presenter.MainViewPresenter;
  * Created by Roman Syrchin on 7/4/18.
  */
 @Singleton
-@Component(modules = {SchedulerModule.class})
+@Component(modules = {SchedulerModule.class, FollowersRepoModule.class})
 public interface AppComponent
 {
     void inject(FollowersPresenter presenter);

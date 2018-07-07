@@ -18,18 +18,15 @@ import javax.inject.Inject
 class FollowersPresenter : MvpPresenter<FollowersView>() {
 
 
-    @Inject
-    lateinit var mainThreadScheduler: Scheduler
-
-//    @Inject
-    lateinit var repo : FollowersRepo
-
-    private lateinit var followers : VKUsersArray
-
     init {
-        Application.getAppComponent().inject(this)
-        followers = VKUsersArray()
+        Timber.v("init FollowersPresenter")
     }
+
+    @Inject lateinit var mainThreadScheduler: Scheduler
+
+    @Inject lateinit var repo : FollowersRepo
+
+    private var followers : VKUsersArray = VKUsersArray()
 
     //    constructor(mainThreadScheduler: Scheduler, vkDataSource: VkApiDataSource) : super() {
 //        Timber.v("InJECTED!!!!!!")
@@ -39,20 +36,26 @@ class FollowersPresenter : MvpPresenter<FollowersView>() {
 //    }
 
     fun showCard(card: FollowerCardView, position: Int) {
-        if(followers.size == 0) {
-            repo.paolosFollowers.observeOn(mainThreadScheduler)
-                .subscribe { followers.addAll(it)
-                viewState.updated()}
-        } else {
-//            card.setName(followers[position].first_name + followers[position].last_name)
-        }
+//        if(followers.size == 0) {
+//            repo.paolosFollowers.observeOn(mainThreadScheduler)
+//                .subscribe {
+//                    followers.addAll(it)
+//                viewState.updated() }
+//        } else {
+            card.setName(followers[position].first_name + followers[position].last_name)
+//        }
     }
 
     val itemCount : Int
-    get() = followers.size + 1
+    get() = followers.size
 
     override fun onFirstViewAttach() {
         Timber.v("FollowersPresenter.onFirstViewAttach")
+        Application.getAppComponent().inject(this)
+        repo.paolosFollowers.observeOn(mainThreadScheduler)
+                .subscribe {
+                    followers.addAll(it)
+                    viewState.updated() }
         super.onFirstViewAttach()
     }
 

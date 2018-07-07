@@ -41,7 +41,6 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import pro.xite.dev.vkgram.R;
 import pro.xite.dev.vkgram.followers.ui.FollowersFragment;
 import pro.xite.dev.vkgram.followers.view.FollowersView;
@@ -94,43 +93,17 @@ public class MainActivity extends MvpAppCompatActivity implements
 
     @ProvidePresenter
     MainViewPresenter provideMainViewPresenter() {
-        p = new MainViewPresenter(AndroidSchedulers.mainThread(),
-                                     ViewModelProviders.of(this).get(VkApiViewModel.class));
-        Application.getAppComponent().inject(p);
-        return p;
+        return new MainViewPresenter();
     }
 
     private void makeFollowersTab() {
 //        final Fragment f = FollowersFragment.getInstance(vkModel.getLoggedInUser().getValue());
-        final Fragment f = FollowersFragment.getInstance(p.getLoggedInUser());
+        final Fragment f = FollowersFragment.getInstance(mVk.getLoggedInUser());
         viewPagerAdapter.addFragment("", f);
         viewPagerAdapter.notifyDataSetChanged();
         tabLayout.getTabAt(0).setIcon(R.drawable.followers); // FIXME possible npe/bug point
         followersTab = true;
     }
-
-//    @InjectPresenter//(type = PresenterType.GLOBAL)
-//    FollowersPresenter fff;
-//@ProvidePresenter//(type = PresenterType.GLOBAL)
-//public FollowersPresenter provideFollowersPresenter() {
-//    Timber.v("provideFollowersPresenter");
-//    return new FollowersPresenter(
-//            AndroidSchedulers.mainThread(),
-//            ViewModelProviders.of(this).get(VkApiViewModel.class));
-//}
-
-//    @ProvidePresenter(type = PresenterType.GLOBAL)
-//    FollowersPresenter provideFollowersPresenter() {
-//        Timber.v("provideFollowersPresenter");
-//        return new FollowersPresenter(AndroidSchedulers.mainThread(), ViewModelProviders.of(this).get(VkApiViewModel.class));
-//    }
-
-
-/*    private void loadPreferences() {
-        @StyleRes int savedTheme = Application.settings().getInt(ThemeSelectActivity.KEY_THEME_ID, ThemeSelectActivity.NONE);
-        if(savedTheme != ThemeSelectActivity.NONE)
-            theme = savedTheme;
-    }*/
 
     private void initUi() {
         setTheme(p.getTheme());

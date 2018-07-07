@@ -4,7 +4,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApiConst;
@@ -21,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import pro.xite.dev.vkgram.main.Application;
+import timber.log.Timber;
 
 public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource {
 
@@ -65,16 +65,10 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
             @SuppressWarnings("unchecked")
             public void onComplete(VKResponse response) {
                 try {
-                    try {
-                        Thread.sleep(5000
-                        );
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     VKUsersArray users = (VKUsersArray) (response.parsedModel);
                     vkLoggedInUser.setValue(users.get(0));
                 } catch (ClassCastException e) {
-                    Log.e(TAG, String.format(Locale.US, "onComplete: %s", e));
+                    Timber.tag(TAG).e(String.format(Locale.US, "onComplete: %s", e));
                 }
             }
         });
@@ -82,8 +76,8 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
     }
 
     private void loadFollowers() {
-        Log.d(TAG, "loadFollowers");
-        Log.d(TAG, "loadFollowers (vkUser != null)");
+        Timber.tag(TAG).d("loadFollowers");
+        Timber.tag(TAG).d("loadFollowers (vkUser != null)");
         VKRequest request = new VKRequest("users.getFollowers");
         request.addExtraParameters(
                 VKParameters.from(VKApiConst.USER_ID, 1,
@@ -93,7 +87,7 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
                 ));
         request.setModelClass(VKUsersArray.class);
         try {
-            Log.i(TAG, String.format("loadFollowers:\n%s", request.getPreparedRequest().getQuery()));
+            Timber.tag(TAG).i(String.format("loadFollowers:\n%s", request.getPreparedRequest().getQuery()));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -101,13 +95,13 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
             @Override
             public void onComplete(VKResponse response) {
                 vkFollowers.setValue((VKUsersArray) (response.parsedModel));
-                Log.d(TAG, "onComplete: loadFollowers " + vkFollowers.getValue().size());
+                Timber.tag(TAG).d("onComplete: loadFollowers %s", vkFollowers.getValue().size());
                 super.onComplete(response);
             }
 
             @Override
             public void onError(VKError error) {
-                Log.e(TAG, "onError: loadFollowers " + error);
+                Timber.tag(TAG).e("onError: loadFollowers " + error);
                 super.onError(error);
             }
         });

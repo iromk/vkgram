@@ -6,10 +6,9 @@ import com.vk.sdk.VKAccessToken
 import com.vk.sdk.VKCallback
 import com.vk.sdk.VKSdk
 import com.vk.sdk.api.VKError
-import com.vk.sdk.api.model.VKApiUserFull
 import io.reactivex.Scheduler
+import pro.xite.dev.vkgram.main.Application
 import pro.xite.dev.vkgram.main.model.ApplicationModel
-import pro.xite.dev.vkgram.main.model.VkApiDataSource
 import pro.xite.dev.vkgram.main.model.VkSession
 import pro.xite.dev.vkgram.main.view.MainView
 import timber.log.Timber
@@ -19,35 +18,37 @@ import javax.inject.Inject
  * Created by Roman Syrchin on 6/30/18.
  */
 @InjectViewState
-class MainViewPresenter(private val mainThreadSche1duler: Scheduler,
-                        private val vkDataSource: VkApiDataSource) : MvpPresenter<MainView>() {
+class MainViewPresenter() : MvpPresenter<MainView>() {
 
+    init {
+        Application.getAppComponent().inject(this)
+    }
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
         initVkSession()
     }
 
     @Inject lateinit var mainThreadScheduler: Scheduler
-    val m = ApplicationModel()
+    val modelApp = ApplicationModel()
 
     fun onThemeChange(theme : Int ) {
-        m.theme = theme
+        modelApp.theme = theme
     }
 
-    val theme : Int get() = m.theme
+    val theme : Int get() = modelApp.theme
 
 
-    fun getLoggedInUser() : VKApiUserFull {
+/*    fun getLoggedInUser() : VKApiUserFull {
         return vkDataSource.getLoggedInUser()
     }
 
     fun clearLoggedInUser() {
         vkDataSource.clearLoggedInUser()
-    }
+    }*/
 
     private fun initVkSession() {
         if (VKSdk.isLoggedIn()) {
-            Timber.v("U r logged in already")
+            Timber.v("U r logged in already, your token == %s", VKAccessToken.currentToken().accessToken)
             viewState.setUiStateLoggedIn()
         } else
         VkSession.init(object : VKCallback<VKSdk.LoginState> {
@@ -70,7 +71,7 @@ class MainViewPresenter(private val mainThreadSche1duler: Scheduler,
         })
     }
 
-    fun getVkDataSource() : VkApiDataSource = vkDataSource
+//    fun getVkDataSource() : VkApiDataSource = vkDataSource
 
     fun onLogoutVk() : Boolean {
         VKSdk.logout()

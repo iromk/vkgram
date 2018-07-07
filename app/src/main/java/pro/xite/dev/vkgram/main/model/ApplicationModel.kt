@@ -1,5 +1,6 @@
 package pro.xite.dev.vkgram.main.model
 
+import android.support.annotation.StyleRes
 import pro.xite.dev.vkgram.R
 
 /**
@@ -7,7 +8,7 @@ import pro.xite.dev.vkgram.R
  */
 class ApplicationModel {
 
-    var theme : Int = R.style.VkgramTheme_Indigo
+    @StyleRes var theme : Int = R.style.VkgramTheme_Indigo
 
 
 }
