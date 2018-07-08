@@ -34,6 +34,7 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
         super(application);
     }
 
+/*
     public LiveData<VKUsersArray> getFollowersLiveData() {
         if (vkFollowers == null) {
             vkFollowers = new MutableLiveData<>();
@@ -41,6 +42,7 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
         }
         return vkFollowers;
     }
+*/
 
     public VKApiUserFull getLoggedInUser() {
         return getLoggedInUserLiveData().getValue();
@@ -76,6 +78,7 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
 
     }
 
+/*
     private void loadFollowers() {
         Timber.tag(TAG).d("loadFollowers");
         Timber.tag(TAG).d("loadFollowers (vkUser != null)");
@@ -107,7 +110,9 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
             }
         });
     }
+*/
 
+/*
     @Override
     public void executeGetFollowers(VKRequest.VKRequestListener listener) {
         VKRequest request = new VKRequest("users.getFollowers");
@@ -120,6 +125,7 @@ public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource 
         request.setModelClass(VKUsersArray.class);
         request.executeWithListener(listener);
     }
+*/
 
     @Override
     public void clearLoggedInUser() {

@@ -42,7 +42,12 @@ class FollowersPresenter : MvpPresenter<FollowersView>() {
 //                    followers.addAll(it)
 //                viewState.updated() }
 //        } else {
-            card.setName(followers[position].first_name + followers[position].last_name)
+            val follower = followers[position]
+            card.setName(follower.first_name + " " + follower.last_name)
+            if(follower.photo_100.length > 50) card.setAvatar(follower.photo_100)
+            else card.setAvatarStub(follower.sex)
+            if(follower.city != null) card.setCity(follower.city.title)
+            card.setPosition(position.toString())
 //        }
     }
 

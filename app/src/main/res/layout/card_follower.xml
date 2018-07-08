@@ -32,7 +32,7 @@
             <com.android.volley.toolbox.NetworkImageView
                 android:id="@+id/card_avatar"
                 android:layout_width="100dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:scaleType="fitCenter"/>
 
             <LinearLayout

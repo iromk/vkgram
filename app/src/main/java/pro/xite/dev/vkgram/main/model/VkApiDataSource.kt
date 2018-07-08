@@ -1,9 +1,7 @@
 package pro.xite.dev.vkgram.main.model
 
 import android.arch.lifecycle.LiveData
-import com.vk.sdk.api.VKRequest
 import com.vk.sdk.api.model.VKApiUserFull
-import com.vk.sdk.api.model.VKUsersArray
 
 /**
  * Created by Roman Syrchin on 7/1/18.
@@ -14,7 +12,7 @@ interface VkApiDataSource {
     fun getLoggedInUser() : VKApiUserFull
     fun clearLoggedInUser()
     fun getLoggedInUserLiveData() : LiveData<VKApiUserFull>
-    fun getFollowersLiveData(): LiveData<VKUsersArray>
-    fun executeGetFollowers(listener : VKRequest.VKRequestListener)
+//    fun getFollowersLiveData(): LiveData<VKUsersArray>
+//    fun executeGetFollowers(listener : VKRequest.VKRequestListener)
 
 }
