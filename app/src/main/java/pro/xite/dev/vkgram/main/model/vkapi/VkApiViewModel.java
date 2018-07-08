@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram.main.model;
+package pro.xite.dev.vkgram.main.model.vkapi;
 
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import pro.xite.dev.vkgram.main.Application;
+import pro.xite.dev.vkgram.main.model.VkApiDataSource;
 import timber.log.Timber;
 
 public class VkApiViewModel extends AndroidViewModel implements VkApiDataSource {

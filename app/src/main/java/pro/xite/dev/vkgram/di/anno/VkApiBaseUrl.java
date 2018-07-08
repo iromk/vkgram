@@ -8,11 +8,10 @@ import javax.inject.Qualifier;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Created by Roman Syrchin on 7/7/18.
+ * Created by Roman Syrchin on 7/8/18.
  */
 @Qualifier
 @Documented
 @Retention(RUNTIME)
-public @interface VkApiVersion {
-    String value() default "default";
+public @interface VkApiBaseUrl {
 }

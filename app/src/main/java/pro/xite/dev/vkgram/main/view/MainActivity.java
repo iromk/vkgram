@@ -46,7 +46,7 @@ import pro.xite.dev.vkgram.followers.ui.FollowersFragment;
 import pro.xite.dev.vkgram.followers.view.FollowersView;
 import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
 import pro.xite.dev.vkgram.main.Application;
-import pro.xite.dev.vkgram.main.model.VkApiViewModel;
+import pro.xite.dev.vkgram.main.model.vkapi.VkApiViewModel;
 import pro.xite.dev.vkgram.main.presenter.MainViewPresenter;
 import timber.log.Timber;
 

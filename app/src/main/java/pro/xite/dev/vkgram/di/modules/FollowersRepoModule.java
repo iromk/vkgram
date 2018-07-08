@@ -6,8 +6,8 @@ import dagger.Module;
 import dagger.Provides;
 import pro.xite.dev.vkgram.followers.model.FollowersRepo;
 import pro.xite.dev.vkgram.main.model.VkApiDataSource;
-import pro.xite.dev.vkgram.main.model.VkApiService;
-import pro.xite.dev.vkgram.main.model.VkApiViewModel;
+import pro.xite.dev.vkgram.main.model.vkapi.VkApiService;
+import pro.xite.dev.vkgram.main.model.vkapi.VkApiViewModel;
 import pro.xite.dev.vkgram.main.view.MainActivity;
 
 /**

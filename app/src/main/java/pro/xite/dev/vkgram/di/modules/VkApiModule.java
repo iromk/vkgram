@@ -6,17 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.model.VKUsersArray;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
-
-import javax.annotation.Nullable;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -25,15 +15,14 @@ import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import pro.xite.dev.vkgram.main.model.VkApiService;
-import retrofit2.Converter;
+import pro.xite.dev.vkgram.di.anno.VkApiBaseUrl;
+import pro.xite.dev.vkgram.di.anno.VkApiVersion;
+import pro.xite.dev.vkgram.main.model.converter.VkApiModelConverterFactory;
+import pro.xite.dev.vkgram.main.model.vkapi.VkApiService;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import timber.log.Timber;
 
 /**
  * Created by Roman Syrchin on 7/7/18.
@@ -47,59 +36,22 @@ public class VkApiModule {
     }
 
     @Provides
-    public Retrofit retrofit(@Named("VkApiBaseUrl") String baseUrl,
+    public Retrofit retrofit(@VkApiBaseUrl String baseUrl,
                              OkHttpClient client,
-                             GsonConverterFactory gsonConverterFactory,
+                             VkApiModelConverterFactory vkApiModelConverterFactory,
+//                             GsonConverterFactory gsonConverterFactory,
                              RxJava2CallAdapterFactory rxJava2CallAdapterFactory)
     {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(client)
                 .addCallAdapterFactory(rxJava2CallAdapterFactory)
-                .addConverterFactory(new MyCnvFac())
+                .addConverterFactory(vkApiModelConverterFactory)
 //                .addConverterFactory(gsonConverterFactory)
                 .build();
     }
 
-    class MyCnvFac extends Converter.Factory {
-        @Nullable
-        @Override
-        public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-            Timber.v("MyCnvFac extends Converter.Factory");
-            return new MyCnv<>();
-//            return super.responseBodyConverter(type, annotations, retrofit);
-        }
-
-        @Nullable
-        @Override
-        public Converter<?, RequestBody> requestBodyConverter(Type type, Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-            return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
-        }
-
-        @Nullable
-        @Override
-        public Converter<?, String> stringConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
-            return super.stringConverter(type, annotations, retrofit);
-        }
-    }
-
-    class MyCnv<T> implements Converter<ResponseBody, T> {
-
-        @Override
-        public T convert(ResponseBody value) throws IOException {
-            String v = value.string();
-            Timber.v(v);
-            VKUsersArray a = new VKUsersArray();
-            try {
-                a = (VKUsersArray) a.parse(new JSONObject(v));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return (T) a;
-        }
-    }
-
-    @Provides @Named("VkApiBaseUrl")
+    @Provides @VkApiBaseUrl
     public String provideVkBaseApiUrl() {
         return "https://api.vk.com/";
     }
@@ -130,8 +82,6 @@ public class VkApiModule {
                     .url().newBuilder()
                     .addQueryParameter(VKApiConst.ACCESS_TOKEN, vkAccessToken.accessToken)
                     .addQueryParameter(VKApiConst.VERSION, vkApiVersion)
-                    .addQueryParameter(VKApiConst.FIELDS, "id,first_name,last_name,sex,bdate,city,photo_100")
-                    .addQueryParameter(VKApiConst.COUNT, "3")
                     .build();
             Request.Builder requestBuilder = originalRequest.newBuilder().url(newHttpUrl);
             Request request = requestBuilder.build();
@@ -146,6 +96,11 @@ public class VkApiModule {
     @Provides
     @VkApiVersion
     String provideVkApiVersion() { return VKSdk.getApiVersion(); }
+
+    @Provides
+    public VkApiModelConverterFactory provideVkApiModelConverterFactory() {
+        return VkApiModelConverterFactory.create();
+    }
 
     @Provides
     public GsonConverterFactory provideGsonConverterFactory(Gson gson) {

@@ -3,7 +3,7 @@ package pro.xite.dev.vkgram.followers.model
 import com.vk.sdk.api.model.VKUsersArray
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import pro.xite.dev.vkgram.main.model.VkApiService
+import pro.xite.dev.vkgram.main.model.vkapi.VkApiService
 
 /**
  * Created by Roman Syrchin on 7/3/18.
@@ -11,7 +11,7 @@ import pro.xite.dev.vkgram.main.model.VkApiService
 class FollowersRepo internal constructor(internal val vkApi: VkApiService) {
 
     val paolosFollowers: Observable<VKUsersArray>
-        get() = vkApi.getFollowers("1")
+        get() = vkApi.getFollowers("1", 10, "id,first_name,last_name,sex,bdate,city,photo_100")
                      .subscribeOn(Schedulers.io())
                 .onErrorReturn { VKUsersArray() }
 //            Observable.create { emitter ->
