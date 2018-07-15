@@ -1,6 +1,7 @@
 package pro.xite.dev.vkgram.main.view;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pro.xite.dev.vkgram.R;
+import pro.xite.dev.vkgram.followers.model.VkContentProvider;
 import pro.xite.dev.vkgram.followers.ui.FollowersFragment;
 import pro.xite.dev.vkgram.followers.view.FollowersView;
 import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
@@ -285,6 +287,7 @@ public class MainActivity extends MvpAppCompatActivity implements
                 viewPagerAdapter.notifyDataSetChanged();
                 return true; //loadAlbums();
             case R.id.load_followers:
+                Uri uri = getContentResolver().insert(VkContentProvider.Companion.getUri(), new ContentValues());
                 makeFollowersTab();
                 return true;
             case R.id.logout:

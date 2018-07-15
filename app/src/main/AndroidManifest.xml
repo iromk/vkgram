@@ -2,12 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pro.xite.dev.vkgram">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18"/>
-    <uses-feature android:name="android.hardware.camera"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <application
@@ -18,25 +20,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/VkgramTheme.Greengo">
-        <activity android:name="com.vk.sdk.VKServiceActivity"
-                  android:label="ServiceActivity"
-                  android:theme="@style/VK.Transparent" />
+        <activity
+            android:name="com.vk.sdk.VKServiceActivity"
+            android:label="ServiceActivity"
+            android:theme="@style/VK.Transparent" />
         <activity
             android:name=".main.view.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".main.view.ThemeSelectActivity"
             android:label="@string/theme_select_title">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".main.view.MainActivity" />
         </activity>
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="pro.xite.dev.vkgram.fileprovider"
@@ -46,6 +50,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <provider
+            android:name=".followers.model.VkContentProvider"
+            android:authorities="pro.xite.dev.vkgram"
+            android:enabled="true"
+            android:exported="false"></provider>
     </application>
 
 </manifest>
