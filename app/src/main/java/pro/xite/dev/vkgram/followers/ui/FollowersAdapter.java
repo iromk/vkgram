@@ -35,7 +35,7 @@ public class FollowersAdapter extends MvpBaseAdapter implements FollowersView {
     public FollowersAdapter(MvpDelegate<?> parentDelegate) {
         super(parentDelegate, String.valueOf(1));
         Timber.v("FollowersAdapter constructor");
-        VkLoaderService.startActionFoo(Application.getInstance().getApplicationContext(), "some", p);
+        VkLoaderService.startActionGetFollowers(Application.getInstance().getApplicationContext(), "some", p);
     }
 
     @NonNull

@@ -16,14 +16,15 @@ import javax.inject.Inject
  */
 @InjectViewState
 class FollowersPresenter : MvpPresenter<FollowersView>(), FollowersResultReceiver.Callback {
+
     override fun onSuccess(data: VKUsersArray) {
         Timber.v("FollowersPresenter.onSuccess")
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        followers.addAll(data)
+        mainThreadScheduler.scheduleDirect { viewState.updated() }
     }
 
     override fun onError(e: Exception) {
         Timber.v("FollowersPresenter.onError")
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
 
@@ -37,27 +38,13 @@ class FollowersPresenter : MvpPresenter<FollowersView>(), FollowersResultReceive
 
     private var followers : VKUsersArray = VKUsersArray()
 
-    //    constructor(mainThreadScheduler: Scheduler, vkDataSource: VkApiDataSource) : super() {
-//        Timber.v("InJECTED!!!!!!")
-//        this.mainThreadScheduler = mainThreadScheduler
-//        this.followers = VKUsersArray()
-//        this.repo = FollowersRepo(vkDataSource)
-//    }
-
     fun showCard(card: FollowerCardView, position: Int) {
-//        if(followers.size == 0) {
-//            repo.paolosFollowers.observeOn(mainThreadScheduler)
-//                .subscribe {
-//                    followers.addAll(it)
-//                viewState.updated() }
-//        } else {
-            val follower = followers[position]
-            card.setName(follower.first_name + " " + follower.last_name)
-            if(follower.photo_100.length > 50) card.setAvatar(follower.photo_100)
-            else card.setAvatarStub(follower.sex)
-            if(follower.city != null) card.setCity(follower.city.title)
-            card.setPosition(position.toString())
-//        }
+        val follower = followers[position]
+        card.setName(follower.first_name + " " + follower.last_name)
+        if(follower.photo_100.length > 50) card.setAvatar(follower.photo_100)
+        else card.setAvatarStub(follower.sex)
+        if(follower.city != null) card.setCity(follower.city.title)
+        card.setPosition(position.toString())
     }
 
     val itemCount : Int
@@ -66,11 +53,6 @@ class FollowersPresenter : MvpPresenter<FollowersView>(), FollowersResultReceive
     override fun onFirstViewAttach() {
         Timber.v("FollowersPresenter.onFirstViewAttach")
         Application.getAppComponent().inject(this)
-//        repo.paolosFollowers.observeOn(mainThreadScheduler)
-//                .subscribe {
-//                    followers.addAll(it)
-//                    viewState.updated() }
         super.onFirstViewAttach()
     }
-
 }

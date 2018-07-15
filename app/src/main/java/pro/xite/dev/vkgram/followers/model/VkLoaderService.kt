@@ -1,36 +1,27 @@
 package pro.xite.dev.vkgram.followers.model
 
+import android.app.Activity.RESULT_OK
 import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.ResultReceiver
+import com.vk.sdk.api.model.VKUsersArray
 import pro.xite.dev.vkgram.followers.presenter.FollowersResultReceiver
 import pro.xite.dev.vkgram.main.Application
-import pro.xite.dev.vkgram.main.model.vkapi.VkApiService
 import timber.log.Timber
 import javax.inject.Inject
 
-// TODO: Rename actions, choose action names that describe tasks that this
-// IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-private const val ACTION_FOO = "pro.xite.dev.vkgram.followers.model.action.FOO"
+private const val ACTION_GET_FOLLOWERS = "pro.xite.dev.vkgram.followers.model.action.get_followers"
 private const val ACTION_BAZ = "pro.xite.dev.vkgram.followers.model.action.BAZ"
 
-// TODO: Rename parameters
-private const val EXTRA_PARAM1 = "pro.xite.dev.vkgram.followers.model.extra.PARAM1"
-private const val EXTRA_PARAM2 = "pro.xite.dev.vkgram.followers.model.extra.PARAM2"
+private const val EXTRA_ID = "pro.xite.dev.vkgram.followers.model.extra.ID"
+private const val EXTRA_CALLBACK = "pro.xite.dev.vkgram.followers.model.extra.CALLBACK"
 
-/**
- * An [IntentService] subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
 class VkLoaderService : IntentService("VkLoaderService") {
 
     private lateinit var resultCallback: ResultReceiver
-    @Inject
-    lateinit var vkApi: VkApiService
+    @Inject lateinit var followersRepo : FollowersRepo
 
     override fun onCreate() {
         Timber.v("VkLoaderService.onCreate")
@@ -39,14 +30,14 @@ class VkLoaderService : IntentService("VkLoaderService") {
     }
 
     override fun onHandleIntent(intent: Intent?) {
-        resultCallback = intent?.getParcelableExtra(EXTRA_PARAM2) ?: return
+        resultCallback = intent?.getParcelableExtra(EXTRA_CALLBACK) ?: return
         when (intent?.action) {
-            ACTION_FOO -> {
-                val param1 = intent.getStringExtra(EXTRA_PARAM1)
-                handleActionFoo(param1, resultCallback)
+            ACTION_GET_FOLLOWERS -> {
+                val id = intent.getStringExtra(EXTRA_ID)
+                handleActionGetFollowers(id, resultCallback)
             }
             ACTION_BAZ -> {
-                val param1 = intent.getStringExtra(EXTRA_PARAM1)
+                val param1 = intent.getStringExtra(EXTRA_ID)
                 handleActionBaz(param1, resultCallback)
             }
         }
@@ -56,12 +47,13 @@ class VkLoaderService : IntentService("VkLoaderService") {
      * Handle action Foo in the provided background thread with the provided
      * parameters.
      */
-    private fun handleActionFoo(param1: String, resultReceiver: ResultReceiver) {
-        Timber.v("handleActionFoo")
+    private fun handleActionGetFollowers(id: String, resultReceiver: ResultReceiver) {
+        Timber.v("handleActionGetFollowers")
         val cursor = contentResolver.query(VkContentProvider.uri, null, null, null, null)
-        val bundle = Bundle().apply { putString("A", "cursor") }
-        resultReceiver.send(23, bundle)
-//        TODO("Handle action Foo")
+        followersRepo.paolosFollowers.subscribe {
+            val bundle = Bundle().apply { putParcelable(VKUsersArray::class.java.simpleName, it) }
+            resultReceiver.send(RESULT_OK, bundle)
+        }
     }
 
     /**
@@ -79,14 +71,13 @@ class VkLoaderService : IntentService("VkLoaderService") {
          *
          * @see IntentService
          */
-        // TODO: Customize helper method
         @JvmStatic
-        fun startActionFoo(context: Context, param1: String, callback: FollowersResultReceiver.Callback) {
+        fun startActionGetFollowers(context: Context, id: String, callback: FollowersResultReceiver.Callback) {
             val resultReceiver = FollowersResultReceiver(null, callback)
             val intent = Intent(context, VkLoaderService::class.java).apply {
-                action = ACTION_FOO
-                putExtra(EXTRA_PARAM1, param1)
-                putExtra(EXTRA_PARAM2, resultReceiver)
+                action = ACTION_GET_FOLLOWERS
+                putExtra(EXTRA_ID, id)
+                putExtra(EXTRA_CALLBACK, resultReceiver)
             }
             context.startService(intent)
         }
@@ -97,13 +88,12 @@ class VkLoaderService : IntentService("VkLoaderService") {
          *
          * @see IntentService
          */
-        // TODO: Customize helper method
         @JvmStatic
         fun startActionBaz(context: Context, param1: String, param2: String) {
             val intent = Intent(context, VkLoaderService::class.java).apply {
                 action = ACTION_BAZ
-                putExtra(EXTRA_PARAM1, param1)
-                putExtra(EXTRA_PARAM2, param2)
+                putExtra(EXTRA_ID, param1)
+                putExtra(EXTRA_CALLBACK, param2)
             }
             context.startService(intent)
         }

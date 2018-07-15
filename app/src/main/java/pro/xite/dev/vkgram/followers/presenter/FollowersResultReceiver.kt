@@ -1,5 +1,6 @@
 package pro.xite.dev.vkgram.followers.presenter
 
+import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.os.Handler
 import android.os.ResultReceiver
@@ -17,7 +18,10 @@ class FollowersResultReceiver (handler: Handler?, private val callback: Callback
 
 
         when(resultCode) {
-            23 -> { callback.onSuccess(VKUsersArray()) }
+            RESULT_OK -> {
+                val vkUsersArray = resultData?.get(VKUsersArray::class.java.simpleName) as VKUsersArray
+                callback.onSuccess(vkUsersArray)
+            }
         }
     }
 
