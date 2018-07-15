@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
@@ -16,7 +15,6 @@ import com.vk.sdk.api.model.VKUsersArray;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 import pro.xite.dev.vkgram.main.Application;

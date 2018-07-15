@@ -15,7 +15,16 @@ import javax.inject.Inject
  * Created by Roman Syrchin on 7/3/18.
  */
 @InjectViewState
-class FollowersPresenter : MvpPresenter<FollowersView>() {
+class FollowersPresenter : MvpPresenter<FollowersView>(), FollowersResultReceiver.Callback {
+    override fun onSuccess(data: VKUsersArray) {
+        Timber.v("FollowersPresenter.onSuccess")
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onError(e: Exception) {
+        Timber.v("FollowersPresenter.onError")
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 
     init {
@@ -57,10 +66,10 @@ class FollowersPresenter : MvpPresenter<FollowersView>() {
     override fun onFirstViewAttach() {
         Timber.v("FollowersPresenter.onFirstViewAttach")
         Application.getAppComponent().inject(this)
-        repo.paolosFollowers.observeOn(mainThreadScheduler)
-                .subscribe {
-                    followers.addAll(it)
-                    viewState.updated() }
+//        repo.paolosFollowers.observeOn(mainThreadScheduler)
+//                .subscribe {
+//                    followers.addAll(it)
+//                    viewState.updated() }
         super.onFirstViewAttach()
     }
 

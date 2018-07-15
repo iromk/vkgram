@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import pro.xite.dev.vkgram.di.modules.FollowersRepoModule;
 import pro.xite.dev.vkgram.di.modules.SchedulerModule;
+import pro.xite.dev.vkgram.followers.model.VkLoaderService;
 import pro.xite.dev.vkgram.followers.presenter.FollowersPresenter;
 import pro.xite.dev.vkgram.main.presenter.MainViewPresenter;
 
@@ -17,4 +18,5 @@ public interface AppComponent
 {
     void inject(FollowersPresenter presenter);
     void inject(MainViewPresenter presenter);
+    void inject(VkLoaderService service);
 }

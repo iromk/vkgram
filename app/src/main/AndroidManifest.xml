@@ -54,7 +54,11 @@
             android:name=".followers.model.VkContentProvider"
             android:authorities="pro.xite.dev.vkgram"
             android:enabled="true"
-            android:exported="false"></provider>
+            android:exported="false" />
+
+        <service
+            android:name=".followers.model.VkLoaderService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

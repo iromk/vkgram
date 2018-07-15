@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pro.xite.dev.vkgram.R;
+import pro.xite.dev.vkgram.followers.model.VkLoaderService;
 import pro.xite.dev.vkgram.followers.presenter.FollowersPresenter;
 import pro.xite.dev.vkgram.followers.view.FollowerCardView;
 import pro.xite.dev.vkgram.followers.view.FollowersView;
@@ -33,6 +34,8 @@ public class FollowersAdapter extends MvpBaseAdapter implements FollowersView {
 
     public FollowersAdapter(MvpDelegate<?> parentDelegate) {
         super(parentDelegate, String.valueOf(1));
+        Timber.v("FollowersAdapter constructor");
+        VkLoaderService.startActionFoo(Application.getInstance().getApplicationContext(), "some", p);
     }
 
     @NonNull

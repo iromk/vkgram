@@ -3,16 +3,29 @@ package pro.xite.dev.vkgram.followers.model
 import android.content.ContentProvider
 import android.content.ContentUris
 import android.content.ContentValues
+import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
 import io.realm.Realm
+import pro.xite.dev.vkgram.di.AppComponent
+import timber.log.Timber
 
 class VkContentProvider : ContentProvider() {
 
     companion object {
-        val uri = Uri.Builder().scheme("content").authority("pro.xite.dev.vkgram").build()
+        const val CONTENT_SCHEME = "content"
+        const val AUTHORTITY = "pro.xite.dev.vkgram"
+        const val VK_FOLLOWERS = "followers"
+        const val REQUEST_FOLLOWERS = 1900
+        val uri = Uri.Builder().scheme(CONTENT_SCHEME).authority(AUTHORTITY).build()
+    }
 
+    val uriMatcher = UriMatcher(UriMatcher.NO_MATCH)
+
+
+    init {
+        uriMatcher.addURI(AUTHORTITY, VK_FOLLOWERS, REQUEST_FOLLOWERS)
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
@@ -28,6 +41,8 @@ class VkContentProvider : ContentProvider() {
         return ContentUris.withAppendedId(uri, 11)
     }
 
+    private lateinit var appComponent: AppComponent
+
     override fun onCreate(): Boolean {
         Realm.init(context)
         val realm = Realm.getDefaultInstance()
@@ -37,7 +52,13 @@ class VkContentProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?,
                        selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
-        TODO("Implement this to handle query requests from clients.")
+        Timber.v("VkContentProvider.query")
+
+        when(uriMatcher.match(uri)) {
+            REQUEST_FOLLOWERS -> { Timber.v("Got followers request") }
+        }
+        return null
+//        TODO("Implement this to handle query requests from clients.")
     }
 
     override fun update(uri: Uri, values: ContentValues?, selection: String?,
