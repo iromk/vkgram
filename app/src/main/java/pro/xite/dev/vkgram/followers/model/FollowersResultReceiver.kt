@@ -1,4 +1,4 @@
-package pro.xite.dev.vkgram.followers.presenter
+package pro.xite.dev.vkgram.followers.model
 
 import android.app.Activity.RESULT_OK
 import android.os.Bundle

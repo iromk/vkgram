@@ -8,7 +8,9 @@ import android.database.Cursor
 import android.net.Uri
 import android.util.Log
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import pro.xite.dev.vkgram.di.AppComponent
+import pro.xite.dev.vkgram.followers.model.db.realm.FollowersMigration
 import timber.log.Timber
 
 class VkContentProvider : ContentProvider() {
@@ -45,6 +47,11 @@ class VkContentProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
         Realm.init(context)
+        val config = RealmConfiguration.Builder()
+                .schemaVersion(1)
+                .migration(FollowersMigration())
+                .build()
+        Realm.setDefaultConfiguration(config)
         val realm = Realm.getDefaultInstance()
         Log.v("Provider", "VkContentProvider onCreate")
         return false

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.ResultReceiver
 import com.vk.sdk.api.model.VKUsersArray
-import pro.xite.dev.vkgram.followers.presenter.FollowersResultReceiver
 import pro.xite.dev.vkgram.main.Application
 import timber.log.Timber
 import javax.inject.Inject
@@ -50,9 +49,11 @@ class VkLoaderService : IntentService("VkLoaderService") {
     private fun handleActionGetFollowers(id: String, resultReceiver: ResultReceiver) {
         Timber.v("handleActionGetFollowers")
         val cursor = contentResolver.query(VkContentProvider.uri, null, null, null, null)
-        followersRepo.paolosFollowers.subscribe {
-            val bundle = Bundle().apply { putParcelable(VKUsersArray::class.java.simpleName, it) }
-            resultReceiver.send(RESULT_OK, bundle)
+        if(cursor == null || cursor.count == 0) {
+            followersRepo.paolosFollowers.subscribe {
+                val bundle = Bundle().apply { putParcelable(VKUsersArray::class.java.simpleName, it) }
+                resultReceiver.send(RESULT_OK, bundle)
+            }
         }
     }
 
