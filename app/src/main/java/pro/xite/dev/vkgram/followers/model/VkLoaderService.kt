@@ -50,7 +50,7 @@ class VkLoaderService : IntentService("VkLoaderService") {
     }
 
     /**
-     * Handle action Foo in the provided background thread with the provided
+     * Handle action GetFollowers in the provided background thread with the provided
      * parameters.
      */
     private fun handleActionGetFollowers(id: String, resultReceiver: ResultReceiver) {

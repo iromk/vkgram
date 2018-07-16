@@ -48,10 +48,12 @@ class VkContentProvider : ContentProvider() {
     override fun onCreate(): Boolean {
         Realm.init(context)
         val config = RealmConfiguration.Builder()
-                .schemaVersion(1)
+                .name("vk.followers.realm")
+                .schemaVersion(0)
                 .migration(FollowersMigration())
                 .build()
         Realm.setDefaultConfiguration(config)
+
         val realm = Realm.getDefaultInstance()
         Log.v("Provider", "VkContentProvider onCreate")
         return false
