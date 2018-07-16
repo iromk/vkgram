@@ -2,23 +2,12 @@ package pro.xite.dev.vkgram.followers.model
 
 import com.vk.sdk.api.model.VKUsersArray
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import pro.xite.dev.vkgram.main.model.vkapi.VkApiService
 
 /**
  * Created by Roman Syrchin on 7/3/18.
  */
-class FollowersRepo internal constructor(private val vkApi: VkApiService) : FollowersDataSource {
+class FollowersRepo internal constructor(private val remote: FollowersDataSource, private val local: FollowersDataSource) : FollowersDataSource {
 
-    override val followers: Observable<VKUsersArray> get() = randomFollowersPack
+    override val followers: Observable<VKUsersArray> get() = remote.followers
 
-    private val paolosFollowers: Observable<VKUsersArray>
-        get() = vkApi.getFollowers("1", 100, "id,first_name,last_name,sex,bdate,city,photo_200,photo_100")
-                     .subscribeOn(Schedulers.io())
-                .onErrorReturn { VKUsersArray() }
-
-    private val randomFollowersPack: Observable<VKUsersArray>
-        get() = vkApi.getFollowers("1", 2345, 100,"id,first_name,last_name,sex,bdate,city,photo_200,photo_100")
-                .subscribeOn(Schedulers.io())
-                .onErrorReturn { VKUsersArray() }
 }
