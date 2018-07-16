@@ -8,10 +8,17 @@ import pro.xite.dev.vkgram.main.model.vkapi.VkApiService
 /**
  * Created by Roman Syrchin on 7/3/18.
  */
-class FollowersRepo internal constructor(private val vkApi: VkApiService) {
+class FollowersRepo internal constructor(private val vkApi: VkApiService) : FollowersDataSource {
 
-    val paolosFollowers: Observable<VKUsersArray>
+    override val followers: Observable<VKUsersArray> get() = randomFollowersPack
+
+    private val paolosFollowers: Observable<VKUsersArray>
         get() = vkApi.getFollowers("1", 100, "id,first_name,last_name,sex,bdate,city,photo_200,photo_100")
                      .subscribeOn(Schedulers.io())
+                .onErrorReturn { VKUsersArray() }
+
+    private val randomFollowersPack: Observable<VKUsersArray>
+        get() = vkApi.getFollowers("1", 2345, 100,"id,first_name,last_name,sex,bdate,city,photo_200,photo_100")
+                .subscribeOn(Schedulers.io())
                 .onErrorReturn { VKUsersArray() }
 }

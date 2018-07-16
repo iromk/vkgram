@@ -7,6 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.ResultReceiver
 import com.vk.sdk.api.model.VKUsersArray
+import pro.xite.dev.vkgram.di.anno.LocalDataSource
+import pro.xite.dev.vkgram.di.anno.RemoteDataSource
 import pro.xite.dev.vkgram.main.Application
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,7 +22,12 @@ private const val EXTRA_CALLBACK = "pro.xite.dev.vkgram.followers.model.extra.CA
 class VkLoaderService : IntentService("VkLoaderService") {
 
     private lateinit var resultCallback: ResultReceiver
-    @Inject lateinit var followersRepo : FollowersRepo
+//    @Inject @RemoteDataSource lateinit var followersRepo : FollowersRepo
+    @Inject @field:RemoteDataSource
+    lateinit var remoteRepo: FollowersDataSource
+
+    @Inject @field:LocalDataSource
+    lateinit var localRepo: FollowersDataSource
 
     override fun onCreate() {
         Timber.v("VkLoaderService.onCreate")
@@ -50,7 +57,7 @@ class VkLoaderService : IntentService("VkLoaderService") {
         Timber.v("handleActionGetFollowers")
         val cursor = contentResolver.query(VkContentProvider.uri, null, null, null, null)
         if(cursor == null || cursor.count == 0) {
-            followersRepo.paolosFollowers.subscribe {
+            remoteRepo.followers.subscribe {
                 val bundle = Bundle().apply { putParcelable(VKUsersArray::class.java.simpleName, it) }
                 resultReceiver.send(RESULT_OK, bundle)
             }

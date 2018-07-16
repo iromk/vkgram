@@ -20,4 +20,10 @@ public interface VkApiService {
 
     @GET("/method/users.getFollowers")
     Observable<VKUsersArray> getFollowers(@Query(VKApiConst.USER_ID) String uid, @Query(VKApiConst.COUNT) int count, @Query(VKApiConst.FIELDS) String fields);
+
+    @GET("/method/users.getFollowers")
+    Observable<VKUsersArray> getFollowers(@Query(VKApiConst.USER_ID) String uid,
+                                          @Query(VKApiConst.OFFSET) int offset,
+                                          @Query(VKApiConst.COUNT) int count,
+                                          @Query(VKApiConst.FIELDS) String fields);
 }

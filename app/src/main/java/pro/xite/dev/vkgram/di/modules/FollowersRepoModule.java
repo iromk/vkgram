@@ -1,14 +1,14 @@
 package pro.xite.dev.vkgram.di.modules;
 
-import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.NonNull;
 
 import dagger.Module;
 import dagger.Provides;
+import pro.xite.dev.vkgram.di.anno.LocalDataSource;
+import pro.xite.dev.vkgram.di.anno.RemoteDataSource;
+import pro.xite.dev.vkgram.followers.model.FollowersDataSource;
 import pro.xite.dev.vkgram.followers.model.FollowersRepo;
-import pro.xite.dev.vkgram.main.model.VkApiDataSource;
 import pro.xite.dev.vkgram.main.model.vkapi.VkApiService;
-import pro.xite.dev.vkgram.main.model.vkapi.VkApiViewModel;
-import pro.xite.dev.vkgram.main.view.MainActivity;
 
 /**
  * Created by Roman Syrchin on 7/4/18.
@@ -22,8 +22,15 @@ public class FollowersRepoModule {
     }
 
     @Provides
-    public VkApiDataSource provideVkDataSource() {
-        return ViewModelProviders.of(new MainActivity()).get(VkApiViewModel.class);
+    @RemoteDataSource
+    public FollowersDataSource provideFollowersRemoteDataSource(FollowersRepo followersRepo) {
+        return followersRepo;
+    }
+
+    @Provides
+    @LocalDataSource
+    public FollowersDataSource provideFollowersRealmDataSource(@NonNull FollowersRepo followersRepo) {
+        return followersRepo;
     }
 
 }
