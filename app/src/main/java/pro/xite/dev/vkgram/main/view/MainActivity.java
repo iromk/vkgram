@@ -46,7 +46,6 @@ import pro.xite.dev.vkgram.R;
 import pro.xite.dev.vkgram.followers.model.VkContentProvider;
 import pro.xite.dev.vkgram.followers.ui.FollowersFragment;
 import pro.xite.dev.vkgram.followers.view.FollowersView;
-import pro.xite.dev.vkgram.localalbum.LocalPicturesAlbumFragment;
 import pro.xite.dev.vkgram.main.Application;
 import pro.xite.dev.vkgram.main.model.vkapi.VkApiViewModel;
 import pro.xite.dev.vkgram.main.presenter.MainViewPresenter;
@@ -281,10 +280,10 @@ public class MainActivity extends MvpAppCompatActivity implements
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.load_albums:
-                viewPagerAdapter.addFragment(
-                        "My pics",
-                        LocalPicturesAlbumFragment.create());
-                viewPagerAdapter.notifyDataSetChanged();
+//                viewPagerAdapter.addFragment(
+//                        "My pics",
+//                        LocalPicturesAlbumFragment.create());
+//                viewPagerAdapter.notifyDataSetChanged();
                 return true; //loadAlbums();
             case R.id.load_followers:
                 Uri uri = getContentResolver().insert(VkContentProvider.Companion.getUri(), new ContentValues());

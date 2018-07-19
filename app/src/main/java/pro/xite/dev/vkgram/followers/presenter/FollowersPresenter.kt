@@ -4,7 +4,7 @@ import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.vk.sdk.api.model.VKUsersArray
 import io.reactivex.Scheduler
-import pro.xite.dev.vkgram.followers.model.FollowersRepo
+import pro.xite.dev.vkgram.followers.model.FollowersResultReceiver
 import pro.xite.dev.vkgram.followers.view.FollowerCardView
 import pro.xite.dev.vkgram.followers.view.FollowersView
 import pro.xite.dev.vkgram.main.Application
@@ -34,7 +34,7 @@ class FollowersPresenter : MvpPresenter<FollowersView>(), FollowersResultReceive
 
     @Inject lateinit var mainThreadScheduler: Scheduler
 
-    @Inject lateinit var repo : FollowersRepo
+//    @Inject lateinit var repo : FollowersRepo
 
     private var followers : VKUsersArray = VKUsersArray()
 
